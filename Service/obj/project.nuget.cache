@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "Z3tV8g1rD44=",
+  "success": true,
+  "projectFilePath": "/home/ismail/Documents/Repositories/SilkRoadClone/Service/Service.csproj",
+  "expectedPackageFiles": [
+    "/home/ismail/.nuget/packages/microsoft.aspnetcore.app.ref/10.0.10/microsoft.aspnetcore.app.ref.10.0.10.nupkg.sha512"
+  ],
+  "logs": []
+}
