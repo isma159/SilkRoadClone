@@ -1,10 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "fWzBhTdcMQc=",
+  "dgSpecHash": "Fs0jEn6zSOY=",
   "success": true,
-  "projectFilePath": "/home/ismail/Documents/Repositories/SilkRoadClone/Infra/Infra.csproj",
-  "expectedPackageFiles": [
-    "/home/ismail/.nuget/packages/microsoft.aspnetcore.app.ref/10.0.10/microsoft.aspnetcore.app.ref.10.0.10.nupkg.sha512"
-  ],
+  "projectFilePath": "C:\\Users\\datta\\src\\SilkRoadClone\\Infra\\Infra.csproj",
+  "expectedPackageFiles": [],
   "logs": []
 }
