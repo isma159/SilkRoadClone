@@ -2,11 +2,11 @@ using LinqToDB.Mapping;
 
 namespace Infra;
 [Table("Product")]
-public class Products
+public class Product
 {
-    [PrimaryKey] public string ProductId { get; set; }
-    
-    [Column] [NotNull] public string ProductName { get; set; }
+    [PrimaryKey] public string Id { get; set; } = "";
+
+    [Column] [NotNull] public string Title { get; set; } = "";
     [Column] public string? Description { get; set; }
     [Column] public decimal PriceDkk { get; set; }
     [Column] public int Stock { get; set; }

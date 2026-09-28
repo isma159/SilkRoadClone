@@ -1,6 +1,9 @@
+using LinqToDB;
+using LinqToDB.Data;
+
 namespace Infra;
 
-public class AppDB
+public class AppDb(DataOptions<AppDb> options) : DataConnection(options.Options)
 {
-    
+    public ITable<Product> Products => this.GetTable<Product>();
 }
