@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\datta\\src\\SilkRoadClone\\API\\API.csproj": {}
+    "C:\\Users\\zilas\\RiderProjects\\SilkroadClone\\SilkRoadClone\\API\\API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\datta\\src\\SilkRoadClone\\API\\API.csproj": {
+    "C:\\Users\\zilas\\RiderProjects\\SilkroadClone\\SilkRoadClone\\API\\API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\datta\\src\\SilkRoadClone\\API\\API.csproj",
+        "projectUniqueName": "C:\\Users\\zilas\\RiderProjects\\SilkroadClone\\SilkRoadClone\\API\\API.csproj",
         "projectName": "API",
-        "projectPath": "C:\\Users\\datta\\src\\SilkRoadClone\\API\\API.csproj",
-        "packagesPath": "C:\\Users\\datta\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\datta\\src\\SilkRoadClone\\API\\obj\\",
+        "projectPath": "C:\\Users\\zilas\\RiderProjects\\SilkroadClone\\SilkRoadClone\\API\\API.csproj",
+        "packagesPath": "C:\\Users\\zilas\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\zilas\\RiderProjects\\SilkroadClone\\SilkRoadClone\\API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\datta\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\zilas\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -27,8 +27,8 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\datta\\src\\SilkRoadClone\\Service\\Service.csproj": {
-                "projectPath": "C:\\Users\\datta\\src\\SilkRoadClone\\Service\\Service.csproj"
+              "C:\\Users\\zilas\\RiderProjects\\SilkroadClone\\SilkRoadClone\\Service\\Service.csproj": {
+                "projectPath": "C:\\Users\\zilas\\RiderProjects\\SilkroadClone\\SilkRoadClone\\Service\\Service.csproj"
               }
             }
           }
@@ -486,17 +486,17 @@
         }
       }
     },
-    "C:\\Users\\datta\\src\\SilkRoadClone\\Infra\\Infra.csproj": {
+    "C:\\Users\\zilas\\RiderProjects\\SilkroadClone\\SilkRoadClone\\Infra\\Infra.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\datta\\src\\SilkRoadClone\\Infra\\Infra.csproj",
+        "projectUniqueName": "C:\\Users\\zilas\\RiderProjects\\SilkroadClone\\SilkRoadClone\\Infra\\Infra.csproj",
         "projectName": "Infra",
-        "projectPath": "C:\\Users\\datta\\src\\SilkRoadClone\\Infra\\Infra.csproj",
-        "packagesPath": "C:\\Users\\datta\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\datta\\src\\SilkRoadClone\\Infra\\obj\\",
+        "projectPath": "C:\\Users\\zilas\\RiderProjects\\SilkroadClone\\SilkRoadClone\\Infra\\Infra.csproj",
+        "packagesPath": "C:\\Users\\zilas\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\zilas\\RiderProjects\\SilkroadClone\\SilkRoadClone\\Infra\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\datta\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\zilas\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -527,6 +527,24 @@
         "net10.0": {
           "framework": "net10.0",
           "targetAlias": "net10.0",
+          "dependencies": {
+            "Facet": {
+              "target": "Package",
+              "version": "[6.6.12, )"
+            },
+            "Microsoft.Data.Sqlite": {
+              "target": "Package",
+              "version": "[10.0.12, )"
+            },
+            "NSwag.AspNetCore": {
+              "target": "Package",
+              "version": "[14.7.1, )"
+            },
+            "linq2db": {
+              "target": "Package",
+              "version": "[6.5.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -821,17 +839,17 @@
         }
       }
     },
-    "C:\\Users\\datta\\src\\SilkRoadClone\\Service\\Service.csproj": {
+    "C:\\Users\\zilas\\RiderProjects\\SilkroadClone\\SilkRoadClone\\Service\\Service.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\datta\\src\\SilkRoadClone\\Service\\Service.csproj",
+        "projectUniqueName": "C:\\Users\\zilas\\RiderProjects\\SilkroadClone\\SilkRoadClone\\Service\\Service.csproj",
         "projectName": "Service",
-        "projectPath": "C:\\Users\\datta\\src\\SilkRoadClone\\Service\\Service.csproj",
-        "packagesPath": "C:\\Users\\datta\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\datta\\src\\SilkRoadClone\\Service\\obj\\",
+        "projectPath": "C:\\Users\\zilas\\RiderProjects\\SilkroadClone\\SilkRoadClone\\Service\\Service.csproj",
+        "packagesPath": "C:\\Users\\zilas\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\zilas\\RiderProjects\\SilkroadClone\\SilkRoadClone\\Service\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\datta\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\zilas\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -844,8 +862,8 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\datta\\src\\SilkRoadClone\\Infra\\Infra.csproj": {
-                "projectPath": "C:\\Users\\datta\\src\\SilkRoadClone\\Infra\\Infra.csproj"
+              "C:\\Users\\zilas\\RiderProjects\\SilkroadClone\\SilkRoadClone\\Infra\\Infra.csproj": {
+                "projectPath": "C:\\Users\\zilas\\RiderProjects\\SilkroadClone\\SilkRoadClone\\Infra\\Infra.csproj"
               }
             }
           }
