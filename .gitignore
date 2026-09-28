@@ -1,0 +1,19 @@
+.ignore
+# Build output
+bin/
+obj/
+ 
+# Visual Studio
+.vs/
+*.user
+*.suo
+ 
+# Rider
+.idea/
+ 
+# Log*
+*.log
+ 
+# OS files
+.DS_Store
+Thumb*.db
