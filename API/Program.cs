@@ -25,6 +25,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseExceptionHandler();
 app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+app.UseStaticFiles();
 app.MapControllers();
 app.UseOpenApi();
 app.UseSwaggerUi();
