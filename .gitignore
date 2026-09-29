@@ -17,3 +17,4 @@ obj/
 # OS files
 .DS_Store
 Thumb*.db
+*.db

@@ -1,6 +1,31 @@
+using API;
+using Infra;
+using LinqToDB;
+using Service;
+
 var builder = WebApplication.CreateBuilder(args);
+var dbPath = builder.Configuration["Database:Path"] ?? "db.db";
+var dataOptions = new DataOptions<MyDatabaseConnection>(new DataOptions().UseSQLite($"Data Source={dbPath}"));
+builder.Services.AddScoped(_ => new MyDatabaseConnection(dataOptions));
+builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<SilkRoadCloneSeeder>();
+builder.Services.AddControllers();
+builder.Services.AddOpenApiDocument();
+builder.Services.AddProblemDetails();
+
+var origins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? ["http://localhost:5285"];
+builder.Services.AddCors(o => o.AddDefaultPolicy(p => p.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod()));
+    
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+app.UseCors();
+app.UseOpenApi();
+app.UseSwaggerUi();
 
+using (var scope = app.Services.CreateScope())
+{
+    scope.ServiceProvider.GetRequiredService<SilkRoadCloneSeeder>().Seed();
+}
+
+app.MapControllers();
 app.Run();

@@ -4,6 +4,17 @@
     <ProjectReference Include="..\Infra\Infra.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Facet" Version="6.6.12" />
+    <PackageReference Include="linq2db" Version="6.5.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.12" />
+    <PackageReference Include="NSwag.AspNetCore" Version="14.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DTOs\" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
