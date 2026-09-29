@@ -17,3 +17,6 @@ obj/
 # OS files
 .DS_Store
 Thumb*.db
+*.db
+API/wwwroot/uploads/*
+!API/wwwroot/uploads/.gitkeep
