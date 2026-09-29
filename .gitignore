@@ -18,5 +18,6 @@ obj/
 .DS_Store
 Thumb*.db
 *.db
+*.db
 API/wwwroot/uploads/*
 !API/wwwroot/uploads/.gitkeep

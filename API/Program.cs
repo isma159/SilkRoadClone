@@ -1,32 +1,35 @@
+using API;
 using Infra;
 using LinqToDB;
 using Service;
 
 var builder = WebApplication.CreateBuilder(args);
-
-var options = new DataOptions<AppDb>(
-    new DataOptions().UseSQLite("Data Source=../Infra/db.db"));
-
-builder.Services.AddScoped<AppDb>(_ => new AppDb(options));
+var dbPath = builder.Configuration["Database:Path"] ?? "db.db";
+var dataOptions = new DataOptions<MyDatabaseConnection>(new DataOptions().UseSQLite($"Data Source={dbPath}"));
+builder.Services.AddScoped(_ => new MyDatabaseConnection(dataOptions));
+builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<SilkRoadCloneSeeder>();
 builder.Services.AddControllers();
 builder.Services.AddOpenApiDocument();
-builder.Services.AddCors();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<MyExceptionHandler>();
 
+var origins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? ["http://localhost:5285"];
+builder.Services.AddCors(o => o.AddDefaultPolicy(p => p.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod()));
+
 var app = builder.Build();
+
+app.UseExceptionHandler();
+app.UseCors();
+app.UseStaticFiles();
+app.UseOpenApi();
+app.UseSwaggerUi();
 
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<AppDb>();
-    db.CreateTable<Product>(tableOptions: TableOptions.CreateIfNotExists);
+    scope.ServiceProvider.GetRequiredService<SilkRoadCloneSeeder>().Seed();
 }
 
-app.UseExceptionHandler();
-app.UseCors(config => config.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
-app.UseStaticFiles();
 app.MapControllers();
-app.UseOpenApi();
-app.UseSwaggerUi();
 app.Run();
