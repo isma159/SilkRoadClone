@@ -4,7 +4,7 @@ using LinqToDB;
 using Service.Dtos;
 
 namespace Service;
-public class ProductService(AppDb db)
+public class ProductService(MyDatabaseConnection db)
 {
     public List<ProductResponse> GetAll(string? categoryId, string? search)
     {
