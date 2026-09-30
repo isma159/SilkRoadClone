@@ -9,11 +9,13 @@ var dataOptions = new DataOptions<MyDatabaseConnection>(new DataOptions().UseSQL
 builder.Services.AddScoped(_ => new MyDatabaseConnection(dataOptions));
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<SilkRoadCloneSeeder>();
 builder.Services.AddControllers();
 builder.Services.AddOpenApiDocument();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<MyExceptionHandler>();
+
 
 var origins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? ["http://localhost:5285"];
 builder.Services.AddCors(o => o.AddDefaultPolicy(p => p.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod()));
