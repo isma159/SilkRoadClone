@@ -5,7 +5,7 @@ using LinqToDB;
 using Service.Dtos;
 using DataType = LinqToDB.DataType;
 
-namespace Infra;
+namespace Service;
 
 public class CategoryService(MyDatabaseConnection db)
 {

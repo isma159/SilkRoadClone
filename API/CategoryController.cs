@@ -8,7 +8,9 @@ using Service.Dtos;
 
 namespace API;
 
-public class CategoryController(CategoryService service, MyDatabaseConnection dbc):ControllerBase
+[ApiController]
+[Route("[controller]")]
+public class CategoryController(CategoryService service, MyDatabaseConnection dbc) : ControllerBase
 {
     [HttpGet(nameof(GetCategories))]
     public List<CategoryDto> GetCategories()
