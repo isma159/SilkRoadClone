@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Infra;
 using LinqToDB;
 using Service.Dtos;
@@ -101,4 +104,30 @@ public class ProductService(MyDatabaseConnection db)
     private static ProductResponse ToResponse(Product p) => new(
         p.Id, p.Title, p.Description, p.PriceDkk, p.Stock, p.ShipsFrom,
         p.ImageUrl, p.CategoryId, p.VendorId, p.IsActive, p.CreatedAtUtc);
+
+    public List<ProductResponse> Search(ProductSearchDto dto)
+    {
+        if (dto.MinPriceDkk != null && dto.MaxPriceDkk != null && dto.MinPriceDkk > dto.MaxPriceDkk)
+            throw new ValidationException("Min price cannot exceed max price");
+        
+        var query = db.Products.Where(p => p.IsActive);
+        
+        if (!string.IsNullOrWhiteSpace(dto.CategoryId))
+            query = query.Where(p => p.CategoryId == dto.CategoryId);
+        
+        if (dto.MinPriceDkk != null)
+            query = query.Where(p => p.PriceDkk >= dto.MinPriceDkk);
+
+        if (dto.MaxPriceDkk != null)
+            query = query.Where(p => p.PriceDkk <= dto.MaxPriceDkk);
+
+        if (!string.IsNullOrWhiteSpace(dto.Keyword))
+        {
+            var keyword = dto.Keyword.Trim().ToLower();
+            query = query.Where (p => p.Title.ToLower().Contains(keyword) 
+            || (p.Description != null &&  p.Description.ToLower().Contains(keyword)));
+        }
+
+        return query.ToList().Select(p => new ProductResponse(p)).ToList();
+    }
 }

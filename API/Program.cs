@@ -1,6 +1,9 @@
 using API;
 using Infra;
 using LinqToDB;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Service;
 
 var builder = WebApplication.CreateBuilder(args);
