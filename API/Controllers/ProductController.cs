@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Service;
 using Service.Dtos;
@@ -23,4 +24,7 @@ public class ProductController(ProductService service) : ControllerBase
 
     [HttpDelete(nameof(Delete))]
     public void Delete([FromQuery] string id) => service.Delete(id);
+    
+    [HttpGet(nameof(SearchProducts))]
+    public List<ProductResponse> SearchProducts([FromQuery] ProductSearchDto dto) => service.Search(dto);
 }
