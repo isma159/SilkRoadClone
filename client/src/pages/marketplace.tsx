@@ -1,5 +1,8 @@
 import { Star } from "lucide-react";
+import {Api, ProductResponse} from "@/src/api/Api.ts";
+import {useEffect, useState} from "react";
 
+const api = new Api({baseUrl: "http://localhost:5285"});
 
 export default function MarketView() {
     return (
@@ -15,13 +18,13 @@ export default function MarketView() {
 }
 
 function SideBar() {
+    const [categories, setCategories] = useState<{categoryId: string; categoryName: string}[]>([]);
+
+    useEffect(() => {api.category.categoryGetCategories().then(setCategories);})
     return (
         <div className="flex flex-col min-w-75 w-75 h-full max-h-200 bg-[#101513] rounded-2xl border dropshadow-[0px_0px_15px_#16a34a] border-[#FFFFFF1A] p-4 gap-2 overflow-y-auto">
             <h1 className="flex items-center font-bold text-lg w-full h-10 text-[#34D399]">Categories</h1>
-            <CategoryItem name="Groceries"/>
-            <CategoryItem name="Electronics"/>
-            <CategoryItem name="Home & Living"/>
-            <CategoryItem name="Clothing"/>
+            {categories.map((c) => (<CategoryItem key={c.categoryId} name={c.categoryName ?? "Unnamed"}/>)) }
         </div>
     );
 }
@@ -35,44 +38,21 @@ function CategoryItem({name}: {name: string}) {
 }
 
 function ProductView() {
+    const [products, setProducts] = useState<ProductResponse[]>([]);
 
+    useEffect(() => {api.product.productGetAll().then(setProducts);});
     return (
         <div className="flex flex-col min-w-0 w-full h-full">
             <h1 className="flex min-w-0 w-full px-2 font-bold text-lg text-[#FFFFFF]">Featured Vendors</h1>
             <div className="flex flex-nowrap min-w-0 w-full px-2 mt-4 pb-2 gap-4 overflow-x-auto">
-                <VendorItem/>
-                <VendorItem/>
-                <VendorItem/>
-                <VendorItem/>
-                <VendorItem/>
-                <VendorItem/>
-                <VendorItem/>
-                <VendorItem/>
-                <VendorItem/>
-
+                {products.map((p  ) => (<ProductItem key={p.id} title={p.title ?? "Unnamed"} priceDkk={p.priceDkk}/>))}
             </div>
             <br/>
             <h1 className="flex min-w-0 w-full px-2 font-bold text-lg text-[#FFFFFF]">Products</h1>
             <div className="flex flex-1 flex-wrap mt-4 px-2 gap-6 overflow-y-auto">
-                <ProductItem/>
-                <ProductItem/>
-                <ProductItem/>
-                <ProductItem/>
-                <ProductItem/>
-                <ProductItem/>
-                <ProductItem/>
-                <ProductItem/>
-                <ProductItem/>
-                <ProductItem/>
-                <ProductItem/>
-                <ProductItem/>
-                <ProductItem/>
-                <ProductItem/>
-                <ProductItem/>
-                <ProductItem/>
-                <ProductItem/>
-                <ProductItem/>
+                {products.map((p    ) => (<ProductItem key={p.id} title={p.title ?? "Unnamed"} priceDkk={p.priceDkk}/>))}
             </div>
+
         </div>
     );
 }
@@ -105,18 +85,18 @@ function VendorItem() {
     );
 }
 
-function ProductItem() {
+function ProductItem({title, priceDkk}: {title: string, priceDkk: number}) {
     return (
         <div className="flex flex-col w-65 h-65 bg-[#101513] rounded-2xl border dropshadow-[0px_0px_15px_#16a34a] border-[#FFFFFF1A] hover:border-[#34D399] hover:border-2 transition-colors">
             <div className="flex w-full h-40 bg-[#FFFFFF1A] rounded-t-2xl"/>
             <div className="flex min-w-0 w-full h-10 px-4 py-2">
-                <h1 className="flex min-w-0 w-full text-white font-bold truncate">Placeholder name</h1>
+                <h1 className="flex min-w-0 w-full text-white font-bold truncate">{title}</h1>
             </div>
             <div className="flex w-full h-5 px-4">
                 <h1 className="flex w-full text-[#FFFFFF80] text-xs">Placeholder vendor</h1>
             </div>
             <div className="flex w-full h-10 px-4 py-2">
-                <h1 className="flex w-full font-bold text-[#34D399]">$10.00</h1>
+                <h1 className="flex w-full font-bold text-[#34D399]">{priceDkk ?? 0}</h1>
             </div>
         </div>
     );
