@@ -82,7 +82,7 @@ function VendorItem() {
         <div className="flex flex-col min-w-65 w-65 h-30 bg-[#101513] rounded-2xl border dropshadow-[0px_0px_15px_#16a34a] border-[#FFFFFF1A]">
             <div className="flex w-full h-2/3">
                 <div className="flex justify-center items-center w-20 h-20 ">
-                    <div className="flex w-2/3 h-2/3 bg-slate-800 rounded-xl"/>
+                    <div className="flex w-2/3 h-2/3 bg-[#FFFFFF1A] rounded-xl"/>
                 </div>
                 <div className="flex flex-col w-45 h-20">
                     <div className="flex items-center w-full h-1/2">
@@ -107,8 +107,8 @@ function VendorItem() {
 
 function ProductItem() {
     return (
-        <div className="flex flex-col w-65 h-65 bg-[#101513] rounded-2xl border dropshadow-[0px_0px_15px_#16a34a] border-[#FFFFFF1A]">
-            <div className="flex w-full h-40 bg-slate-800 rounded-t-2xl"/>
+        <div className="flex flex-col w-65 h-65 bg-[#101513] rounded-2xl border dropshadow-[0px_0px_15px_#16a34a] border-[#FFFFFF1A] hover:border-[#34D399] hover:border-2 transition-colors">
+            <div className="flex w-full h-40 bg-[#FFFFFF1A] rounded-t-2xl"/>
             <div className="flex min-w-0 w-full h-10 px-4 py-2">
                 <h1 className="flex min-w-0 w-full text-white font-bold truncate">Placeholder name</h1>
             </div>
