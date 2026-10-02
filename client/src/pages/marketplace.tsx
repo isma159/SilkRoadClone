@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 
 const api = new Api({baseUrl: "http://localhost:5285"});
 
-export default function MarketView() {
+export default function MarketView({searchTerm}: { searchTerm: string }) {
     return (
         <div className="flex w-full h-full gap-8 pt-22 px-4 pb-4">
             <div
@@ -12,7 +12,7 @@ export default function MarketView() {
                 aria-hidden="true"
             />
             <SideBar/>
-            <ProductView/>
+            <ProductView searchTerm={searchTerm}/>
         </div>
     );
 }
@@ -20,7 +20,7 @@ export default function MarketView() {
 function SideBar() {
     const [categories, setCategories] = useState<{categoryId: string; categoryName: string}[]>([]);
 
-    useEffect(() => {api.category.categoryGetCategories().then(setCategories);})
+    useEffect(() => {api.category.categoryGetCategories().then(setCategories);}, []);
     return (
         <div className="flex flex-col min-w-75 w-75 h-full max-h-200 bg-[#101513] rounded-2xl border dropshadow-[0px_0px_15px_#16a34a] border-[#FFFFFF1A] p-4 gap-2 overflow-y-auto">
             <h1 className="flex items-center font-bold text-lg w-full h-10 text-[#34D399]">Categories</h1>
@@ -37,20 +37,27 @@ function CategoryItem({name}: {name: string}) {
     );
 }
 
-function ProductView() {
+function ProductView({searchTerm}: { searchTerm: string }) {
     const [products, setProducts] = useState<ProductResponse[]>([]);
 
-    useEffect(() => {api.product.productGetAll().then(setProducts);});
+    useEffect(() => {
+        const keyword = searchTerm.trim();
+
+        console.log("1. Search term:", keyword);
+
+        api.product.productSearchProducts({Keyword: keyword,}).then((result) => {
+                console.log("2. API result:", result); setProducts(result);})
+            .catch((error) => {console.error("3. API error:", error);});}, [searchTerm]);
     return (
         <div className="flex flex-col min-w-0 w-full h-full">
             <h1 className="flex min-w-0 w-full px-2 font-bold text-lg text-[#FFFFFF]">Featured Vendors</h1>
             <div className="flex flex-nowrap min-w-0 w-full px-2 mt-4 pb-2 gap-4 overflow-x-auto">
-                {products.map((p  ) => (<ProductItem key={p.id} title={p.title ?? "Unnamed"} priceDkk={p.priceDkk}/>))}
+                {products.map((p) => (<ProductItem key={p.id} title={p.title ?? "Unnamed"} priceDkk={p.priceDkk ?? 0}/>))}
             </div>
             <br/>
             <h1 className="flex min-w-0 w-full px-2 font-bold text-lg text-[#FFFFFF]">Products</h1>
             <div className="flex flex-1 flex-wrap mt-4 px-2 gap-6 overflow-y-auto">
-                {products.map((p    ) => (<ProductItem key={p.id} title={p.title ?? "Unnamed"} priceDkk={p.priceDkk}/>))}
+                {products.map((p) => (<ProductItem key={p.id} title={p.title ?? "Unnamed"} priceDkk={p.priceDkk ?? 0}/>))}
             </div>
 
         </div>
