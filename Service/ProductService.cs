@@ -103,7 +103,7 @@ public class ProductService(MyDatabaseConnection db)
 
     private static ProductResponse ToResponse(Product p) => new(
         p.Id, p.Title, p.Description, p.PriceDkk, p.Stock, p.ShipsFrom,
-        p.ImageUrl, p.CategoryId, p.VendorId, p.IsActive, p.CreatedAtUtc);
+        p.ImageUrl, p.CategoryId, p.VendorId, p.IsActive, p.CreatedAtUtc, null);
 
     public List<ProductResponse> Search(ProductSearchDto dto)
     {

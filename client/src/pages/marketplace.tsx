@@ -39,7 +39,7 @@ function ProductView() {
     return (
         <div className="flex flex-col min-w-0 w-full h-full">
             <h1 className="flex min-w-0 w-full px-2 font-bold text-lg text-[#FFFFFF]">Featured Vendors</h1>
-            <div className="flex flex-nowrap min-w-0 w-full px-2 mt-4 pb-2 gap-4 overflow-x-auto">
+            <div className="flex flex-nowrap min-w-0 w-full px-2 mt-4 pb-2 gap-6 overflow-x-auto">
                 <VendorItem/>
                 <VendorItem/>
                 <VendorItem/>
@@ -88,14 +88,12 @@ function VendorItem() {
                     <div className="flex items-center w-full h-1/2">
                         <h1 className="flex mt-2 min-w-0 w-full truncate font-bold text-white"> - Featured Vendor</h1>
                     </div>
-
                     <div className="flex items-center w-full h-1/2">
                         <div className="flex items-center h-1/2 rounded-lg bg-[#34D3991A] border border-[#34D39933] px-3 gap-4 text-[#34D399]">
                             <Star className="fill-[#34D399]" size={10}/>
                             <h1 className="text-[10px] font-bold">Featured</h1>
                         </div>
                     </div>
-
                 </div>
             </div>
             <div className="flex items-center w-full h-1/3">

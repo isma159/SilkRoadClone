@@ -1,3 +1,4 @@
+using Infra.Entities;
 using LinqToDB.Mapping;
 
 namespace Infra;
@@ -16,5 +17,8 @@ public class Product
     [Column] [NotNull] public string VendorId { get; set; } = "";
     [Column] public bool IsActive { get; set; } = true;
     [Column] public DateTime CreatedAtUtc { get; set; }
+    
+    [Association(ThisKey = nameof(VendorId), OtherKey = nameof(User.Id))]
+    public User? Vendor { get; set; }
     
 }
