@@ -1,6 +1,6 @@
 import "./index.css";
 import {Input} from "./components/ui/input.tsx";
-import {Search, LogInIcon} from "lucide-react";
+import {Search, LogInIcon, Menu, User, Store, LogOut} from "lucide-react";
 import LoginView from "@/src/pages/loginview.tsx";
 import {Routes, Route, Link, useNavigate} from "react-router-dom";
 import MarketView from "./pages/marketplace.tsx";
@@ -29,8 +29,8 @@ export function App() {
     );
 }
 
-function TopBar({user, setUser}: {user: UserDto | null, setUser: (user: UserDto | null) => void}) {
-function TopBar({searchTerm, onSearchChange}: {searchTerm: string; onSearchChange: (value: string) => void}) {
+function TopBar({user, setUser, searchTerm, onSearchChange}: {user: UserDto | null, setUser: (user: UserDto | null) => void; 
+searchTerm: string, onSearchChange: (value: string) => void;}) {
     return (
         <div className="fixed top-3 left-3 right-3 flex items-center h-16 rounded-xl border border-[#FFFFFF1A] bg-[#101513]">
             <div className="flex absolute left-1/2 -translate-x-1/2 w-1/3 border border-[#FFFFFF1A] bg-[#00000033] rounded-lg focus-within:border-[#34D399] focus-within:shadow-[0px_0px_10px_#34D399] transition-colors">
