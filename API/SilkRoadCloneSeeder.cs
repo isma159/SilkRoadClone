@@ -20,6 +20,7 @@ public class SilkRoadCloneSeeder(MyDatabaseConnection db)
         db.CreateTable<Category>(tableOptions: TableOptions.CreateIfNotExists);
         db.CreateTable<Product>(tableOptions: TableOptions.CreateIfNotExists);
         db.CreateTable<Order>(tableOptions: TableOptions.CreateIfNotExists);
+        db.CreateTable<User>(tableOptions: TableOptions.CreateIfNotExists);
     }
 
     public void SeedCategories()
