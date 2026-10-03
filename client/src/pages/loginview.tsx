@@ -1,8 +1,35 @@
 import {ArrowUpRight} from "lucide-react";
 import {Input} from "@/src/components/ui/input.tsx";
 
+import {type UserDto} from "@/src/api/Api.ts";
+import {api} from "@/src/api/client"
+import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 
-export default function LoginView() {
+
+export default function LoginView({user, setUser}: {user: UserDto | null, setUser: (user: UserDto | null) => void}) {
+
+    const navigate = useNavigate();
+    const [username, setUsername] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+
+    useEffect(() => {
+        if (user != null) {
+            navigate("/");
+        }
+    }, []);
+
+    const handleLogin = () => {
+        if (user == null) api.user.userLogin({username, password})
+            .then(u => {
+                setUser(u);
+                navigate("/");
+                console.log(u.username + " logged in!");
+            })
+            .catch(err => console.log(err));
+        else console.log("Already logged in, " + user.username);
+    }
+
     return (
         <main>
             <div
@@ -22,13 +49,13 @@ export default function LoginView() {
                 </div>
                 <div className="flex flex-col w-4/5 gap-2">
                     <h1 className="flex text-sm font-bold text-[#FFFFFFBF] w-full text-left">Email Address</h1>
-                    <Input placeholder="ex. you@example.com" className="flex px-4 h-11 focus-visible:ring-0 border placeholder-[#FFFFFF40] text-[#FFFFFF] border-[#FFFFFF1A] bg-[#00000033] rounded-lg focus-visible:border-[#34D399] focus-visible:shadow-[0px_0px_10px_#34D399]"/>
+                    <Input value={username} onChange={e => setUsername(e.target.value)} placeholder="ex. you@example.com" className="flex px-4 h-11 focus-visible:ring-0 border placeholder-[#FFFFFF40] text-[#FFFFFF] border-[#FFFFFF1A] bg-[#00000033] rounded-lg focus-visible:border-[#34D399] focus-visible:shadow-[0px_0px_10px_#34D399]"/>
                 </div>
                 <div className="flex flex-col w-4/5 gap-2">
                     <h1 className="flex text-sm font-bold text-[#FFFFFFBF] w-full text-left">Password</h1>
-                    <Input type={"password"} placeholder="ex. 123456789" className="flex px-4 h-11 focus-visible:ring-0 border placeholder-[#FFFFFF40] text-[#FFFFFF] border-[#FFFFFF1A] bg-[#00000033] rounded-lg focus-visible:border-[#34D399] focus-visible:shadow-[0px_0px_10px_#34D399]"/>
+                    <Input value={password} onChange={e => setPassword(e.target.value)} type={"password"} placeholder="ex. 123456789" className="flex px-4 h-11 focus-visible:ring-0 border placeholder-[#FFFFFF40] text-[#FFFFFF] border-[#FFFFFF1A] bg-[#00000033] rounded-lg focus-visible:border-[#34D399] focus-visible:shadow-[0px_0px_10px_#34D399]"/>
                 </div>
-                <button className="flex justify-center items-center text-sm font-bold w-4/5 h-12 bg-[#34D399] shadow-[0_10px_30px_#34D39926] rounded-lg ring-4 ring-transparent hover:bg-[#6EE7B7] active:ring-[#34D39933] transition-colors">Sign In</button>
+                <button onClick={handleLogin} className="flex justify-center items-center text-sm font-bold w-4/5 h-12 bg-[#34D399] shadow-[0_10px_30px_#34D39926] rounded-lg ring-4 ring-transparent hover:bg-[#6EE7B7] active:ring-[#34D39933] transition-colors">Sign In</button>
             </div>
         </main>
     );

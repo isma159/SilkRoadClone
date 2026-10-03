@@ -10,6 +10,11 @@
  * ---------------------------------------------------------------
  */
 
+export enum Roles {
+  Admin = "Admin",
+  User = "User",
+}
+
 export interface CategoryDto {
   categoryId?: string;
   categoryName?: string;
@@ -68,6 +73,33 @@ export interface ProductResponse {
   isActive?: boolean;
   /** @format date-time */
   createdAtUtc?: string;
+  vendor?: User | null;
+}
+
+export interface User {
+  id?: string;
+  username?: string;
+  password?: string;
+  products?: Product[];
+  role?: Roles;
+}
+
+export interface Product {
+  id?: string;
+  title?: string;
+  description?: string | null;
+  /** @format decimal */
+  priceDkk?: number;
+  /** @format int32 */
+  stock?: number;
+  shipsFrom?: string | null;
+  imageUrl?: string | null;
+  categoryId?: string;
+  vendorId?: string;
+  isActive?: boolean;
+  /** @format date-time */
+  createdAtUtc?: string;
+  vendor?: User | null;
 }
 
 export interface ProductCreateRequest {
@@ -80,6 +112,7 @@ export interface ProductCreateRequest {
   shipsFrom?: string | null;
   imageUrl?: string | null;
   categoryId?: string;
+  vendor?: User | null;
 }
 
 export interface ProductUpdateRequest {
@@ -93,6 +126,24 @@ export interface ProductUpdateRequest {
   shipsFrom?: string | null;
   imageUrl?: string | null;
   categoryId?: string | null;
+  vendor?: User | null;
+}
+
+export interface UserDto {
+  id?: string;
+  username?: string;
+  products?: Product[];
+  role?: Roles;
+}
+
+export interface LoginDto {
+  username?: string;
+  password?: string;
+}
+
+export interface CreateUserRequestDto {
+  username?: string;
+  password?: string;
 }
 
 export interface CategoryDeleteCategoryParams {
@@ -119,6 +170,10 @@ export interface ProductSearchProductsParams {
   /** @format decimal */
   MaxPriceDkk?: number | null;
   Keyword?: string | null;
+}
+
+export interface UserGetUserByNameParams {
+  name: string;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -620,6 +675,74 @@ export class Api<
         path: `/Product/SearchProducts`,
         method: "GET",
         query: query,
+        format: "json",
+        ...params,
+      }),
+  };
+  user = {
+    /**
+     * No description
+     *
+     * @tags User
+     * @name UserGetUsers
+     * @request GET:/User/GetUsers
+     */
+    userGetUsers: (params: RequestParams = {}) =>
+      this.request<UserDto[], any>({
+        path: `/User/GetUsers`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags User
+     * @name UserGetUserByName
+     * @request GET:/User/{name}
+     */
+    userGetUserByName: (
+      { name }: UserGetUserByNameParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<UserDto, any>({
+        path: `/User/${name}`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags User
+     * @name UserLogin
+     * @request POST:/User/Login
+     */
+    userLogin: (data: LoginDto, params: RequestParams = {}) =>
+      this.request<UserDto, any>({
+        path: `/User/Login`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags User
+     * @name UserCreateUser
+     * @request POST:/User/CreateUser
+     */
+    userCreateUser: (data: CreateUserRequestDto, params: RequestParams = {}) =>
+      this.request<UserDto, any>({
+        path: `/User/CreateUser`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
         format: "json",
         ...params,
       }),
