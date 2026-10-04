@@ -19,6 +19,7 @@ public class CategoryServiceTests : IDisposable
             new DataOptions().UseSQLite("Data Source=:memory:"));
         _db = new MyDatabaseConnection(options);
         _db.CreateTable<Category>();
+        _db.CreateTable<Product>();
         _service = new CategoryService(_db);
     }
 
@@ -95,6 +96,28 @@ public class CategoryServiceTests : IDisposable
     public void Delete_throws_for_unknown_id()
     {
         Assert.Throws<ValidationException>(() => _service.Delete("unknown-id"));
+    }
+    [Fact]
+    public void Update_rejects_duplicate_name()
+    {
+        var a = _service.Create(new CreateCategoryRequestDto { CategoryName = "A" });
+        _service.Create(new CreateCategoryRequestDto { CategoryName = "B" });
+
+        Assert.Throws<ValidationException>(() =>
+            _service.Update(new UpdateCategoryRequestDto { CategoryIdForLookup = a.CategoryId, NewName = "b" }));
+    }
+
+    [Fact]
+    public void Delete_blocks_when_category_has_products()
+    {
+        var cat = _service.Create(new CreateCategoryRequestDto { CategoryName = "Weaponry" });
+        _db.Insert(new Product
+        {
+            Id = "p1", Title = "x", CategoryId = cat.CategoryId, VendorId = "v1",
+            IsActive = true, CreatedAtUtc = DateTime.UtcNow
+        });
+
+        Assert.Throws<ValidationException>(() => _service.Delete(cat.CategoryId));
     }
 
     public void Dispose() => _db.Dispose();
