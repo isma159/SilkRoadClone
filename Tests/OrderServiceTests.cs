@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Infra;
+using Infra.Entities;
 using LinqToDB;
 using Service;
 using Service.Dtos;
@@ -20,6 +21,8 @@ public class OrderServiceTests : IDisposable
         _db.CreateTable<Product>();
         _db.CreateTable<Order>();
         _service = new OrderService(_db);
+        _db.CreateTable<User>();
+        _db.Insert(new User { Id = "buyer-1", Username = "buyer", Password = "x" });
     }
 
     private string SeedProduct(int stock = 10, decimal price = 50m)
@@ -120,6 +123,31 @@ public class OrderServiceTests : IDisposable
         var result = _service.Create(new CreateOrderRequestDto { BuyerId = "buyer-1", ProductId = productId, Quantity = 1 });
 
         Assert.Equal("vendor-1", result.VendorId);
+    }
+    [Fact]
+    public void Create_throws_for_unknown_buyer()
+    {
+        var productId = SeedProduct();
+        Assert.Throws<KeyNotFoundException>(() =>
+            _service.Create(new CreateOrderRequestDto { BuyerId = "nobody", ProductId = productId, Quantity = 1 }));
+    }
+
+    [Fact]
+    public void UpdateStatus_sets_status()
+    {
+        var productId = SeedProduct();
+        var order = _service.Create(new CreateOrderRequestDto { BuyerId = "buyer-1", ProductId = productId, Quantity = 1 });
+
+        var result = _service.UpdateStatus(new UpdateOrderStatusRequestDto { OrderId = order.Id, Status = "Completed" });
+
+        Assert.Equal("Completed", result.Status);
+    }
+
+    [Fact]
+    public void UpdateStatus_rejects_unknown_status()
+    {
+        Assert.Throws<ValidationException>(() =>
+            _service.UpdateStatus(new UpdateOrderStatusRequestDto { OrderId = "x", Status = "Banana" }));
     }
 
     public void Dispose() => _db.Dispose();

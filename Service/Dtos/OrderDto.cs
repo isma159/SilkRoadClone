@@ -12,3 +12,9 @@ public class CreateOrderRequestDto
     public string ProductId { get; set; } = "";
     public int Quantity { get; set; }
 }
+
+public class UpdateOrderStatusRequestDto
+{
+    public string OrderId { get; set; } = "";
+    public string Status { get; set; } = "";
+}

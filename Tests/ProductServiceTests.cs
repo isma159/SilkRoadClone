@@ -24,14 +24,14 @@ public class ProductServiceTests : IDisposable
     [Fact]
     public void Create_rejects_negative_price()
     {
-        var request = new ProductCreateRequest("Test", null, -1m, 10, null, null, "1");
+        var request = new ProductCreateRequest("Test", null, -1m, 10, null, null, "1", null);
         Assert.Throws<ValidationException>(() => _service.Create(request));
     }
 
     [Fact]
     public void Create_inserts_and_returns_product()
     {
-        var request = new ProductCreateRequest("Test", null, 99m, 10, null, null, "1");
+        var request = new ProductCreateRequest("Test", null, 99m, 10, null, null, "1", null);
         var result = _service.Create(request);
 
         Assert.False(string.IsNullOrEmpty(result.Id));
@@ -41,7 +41,7 @@ public class ProductServiceTests : IDisposable
     [Fact]
     public void Delete_hides_product_so_GetById_throws()
     {
-        var created = _service.Create(new ProductCreateRequest("Test", null, 99m, 10, null, null, "1"));
+        var created = _service.Create(new ProductCreateRequest("Test", null, 99m, 10, null, null, "1", null));
         _service.Delete(created.Id);
 
         Assert.Throws<KeyNotFoundException>(() => _service.GetById(created.Id));

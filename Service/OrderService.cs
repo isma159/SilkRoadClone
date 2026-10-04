@@ -11,20 +11,31 @@ namespace Service;
 public class OrderService(MyDatabaseConnection db)
 {
     public List<OrderDto> GetAll() => db.Orders.ToList().Select(o => new OrderDto(o)).ToList();
+    
+    private static readonly string[] ValidStatuses = { "Pending", "Completed", "Cancelled" };
 
     public OrderDto Create(CreateOrderRequestDto dto)
     {
         if (dto.Quantity <= 0)
             throw new ValidationException("Quantity must be positive.");
 
+        if (!db.Users.Any(u => u.Id == dto.BuyerId))
+            throw new KeyNotFoundException("Buyer not found.");
+
         var product = db.Products.FirstOrDefault(p => p.Id == dto.ProductId && p.IsActive)
                       ?? throw new KeyNotFoundException("Product not found.");
 
-        if (product.Stock < dto.Quantity)
-            throw new ValidationException("Not enough stock.");
+        if (product.VendorId == dto.BuyerId)
+            throw new ValidationException("You cannot buy your own product.");
 
-        product.Stock -= dto.Quantity;
-        db.Update(product);
+        using var tx = db.BeginTransaction();
+
+        var updated = db.Products
+            .Where(p => p.Id == product.Id && p.Stock >= dto.Quantity)
+            .Set(p => p.Stock, p => p.Stock - dto.Quantity)
+            .Update();
+        if (updated == 0)
+            throw new ValidationException("Not enough stock.");
 
         var order = new Order
         {
@@ -37,8 +48,22 @@ public class OrderService(MyDatabaseConnection db)
             Status = "Pending",
             CreatedAtUtc = DateTime.UtcNow
         };
-
         db.Insert(order);
+
+        tx.Commit();
+        return new OrderDto(order);
+    }
+    public OrderDto UpdateStatus(UpdateOrderStatusRequestDto dto)
+    {
+        if (!ValidStatuses.Contains(dto.Status))
+            throw new ValidationException("Invalid status.");
+
+        var order = db.Orders.FirstOrDefault(o => o.Id == dto.OrderId)
+                    ?? throw new KeyNotFoundException("Order not found.");
+
+        order.Status = dto.Status;
+        db.Update(order);
         return new OrderDto(order);
     }
 }
+
