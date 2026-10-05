@@ -65,7 +65,7 @@ function AccountMenu({setUser}: {setUser: (user: UserDto | null) => void}) {
             <DropdownMenuContent className="w-50 mt-5 bg-[#101513] border border-[#FFFFFF1A] shadow-[0px_0px_15px_#161b18] ring-0">
                 <DropdownMenuItem className="font-bold cursor-pointer text-white my-1 hover:bg-[#232a27] transition-colors"><User className="mr-2 size-6"/> Profile</DropdownMenuItem>
                 <DropdownMenuItem className="font-bold cursor-pointer text-white my-1 hover:bg-[#232a27] transition-colors"><Store className="mr-2 size-6"/> My Stall</DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-[#FFFFFF1A]"/>
+                <DropdownMenuSeparator className="bg-[#FFFFFF1A]"/>5
                 <DropdownMenuItem onClick={handleLogout} variant={"destructive"} className="font-bold cursor-pointer text-red-400 my-1 hover:bg-[#232a27] transition-colors"><LogOut className="mr-2 size-6"/>Log out</DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

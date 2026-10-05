@@ -58,6 +58,20 @@ export interface CreateOrderRequestDto {
   quantity?: number;
 }
 
+export interface UpdateOrderStatusRequestDto {
+  orderId?: string;
+  status?: string;
+}
+
+export interface VendorStatsDto {
+  vendorId?: string;
+  vendorName?: string;
+  /** @format int32 */
+  completedOrderCount?: number;
+  /** @format int32 */
+  rank?: number;
+}
+
 export interface ProductResponse {
   id?: string;
   title?: string;
@@ -148,6 +162,13 @@ export interface CreateUserRequestDto {
 
 export interface CategoryDeleteCategoryParams {
   categoryId?: string;
+}
+
+export interface OrderGetVendorsAboveThresholdParams {
+  /** @format int32 */
+  threshold?: number;
+  /** @format int32 */
+  limit?: number | null;
 }
 
 export interface ProductGetAllParams {
@@ -565,6 +586,45 @@ export class Api<
         method: "POST",
         body: data,
         type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Order
+     * @name OrderUpdateStatus
+     * @request PATCH:/Order/UpdateStatus
+     */
+    orderUpdateStatus: (
+      data: UpdateOrderStatusRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<OrderDto, any>({
+        path: `/Order/UpdateStatus`,
+        method: "PATCH",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Order
+     * @name OrderGetVendorsAboveThreshold
+     * @request GET:/Order/GetVendorsAboveThreshold
+     */
+    orderGetVendorsAboveThreshold: (
+      query: OrderGetVendorsAboveThresholdParams = {},
+      params: RequestParams = {},
+    ) =>
+      this.request<VendorStatsDto[], any>({
+        path: `/Order/GetVendorsAboveThreshold`,
+        method: "GET",
+        query: query,
         format: "json",
         ...params,
       }),

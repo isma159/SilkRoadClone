@@ -1,58 +1,72 @@
 import { Star } from "lucide-react";
-import {Api, ProductResponse} from "@/src/api/Api.ts";
-import {useEffect, useState} from "react";
+import {Api, ProductResponse, VendorStatsDto} from "@/src/api/Api.ts";
+import {use, useEffect, useState} from "react";
 
 const api = new Api({baseUrl: "http://localhost:5285"});
 
 export default function MarketView({searchTerm}: { searchTerm: string }) {
+    const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
     return (
         <div className="flex w-full h-full gap-8 pt-22 px-4 pb-4">
             <div
                 className="pointer-events-none absolute left-1/2 top-1/2 h-205 w-255 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-500/10 blur-[60px]"
                 aria-hidden="true"
             />
-            <SideBar/>
-            <ProductView searchTerm={searchTerm}/>
+            <SideBar selectedCategoryId={selectedCategoryId} onSelectCategory={setSelectedCategoryId} />
+            <ProductView searchTerm={searchTerm} categoryId={selectedCategoryId}/>
         </div>
     );
 }
 
-function SideBar() {
-    const [categories, setCategories] = useState<{categoryId: string; categoryName: string}[]>([]);
+function SideBar({selectedCategoryId, onSelectCategory}: {selectedCategoryId: string | null;
+onSelectCategory: (id: string | null) => void;}) {
+
+    const [categories, setCategories] = useState<{categoryId: string | null ; categoryName: string}[]>([]);
 
     useEffect(() => {api.category.categoryGetCategories().then(setCategories);}, []);
+
+    const handleCategoryClick = (categoryId: string | null) => {onSelectCategory(categoryId === selectedCategoryId ? null : categoryId);};
     return (
         <div className="flex flex-col min-w-75 w-75 h-full max-h-200 bg-[#101513] rounded-2xl border dropshadow-[0px_0px_15px_#16a34a] border-[#FFFFFF1A] p-4 gap-2 overflow-y-auto">
+            <div className="flex items-center justify-between w-full h-10">
             <h1 className="flex items-center font-bold text-lg w-full h-10 text-[#34D399]">Categories</h1>
-            {categories.map((c) => (<CategoryItem key={c.categoryId} name={c.categoryName ?? "Unnamed"}/>)) }
+            {selectedCategoryId && (<button onClick={() => onSelectCategory(null)} className={"text-xs text-[#FFFFFF80] hover:text-[#34D399] transition-colors"}></button>)}
+                </div>
+            {categories.map((c) => (<CategoryItem key={c.categoryId} name={c.categoryName ?? "Unnamed"}
+            isSelected={c.categoryId === selectedCategoryId} onClick={() => handleCategoryClick(c.categoryId)}/>))}
         </div>
     );
 }
 
-function CategoryItem({name}: {name: string}) {
+function CategoryItem({name, isSelected, onClick}: {name: string, isSelected: boolean, onClick: () => void}) {
     return (
         <div className="flex w-full justify-end items-center">
-            <button className="flex items-center w-9/10 h-10 rounded-lg hover:bg-[#232a27] text-[#FFFFFFBF] px-2">{name}</button>
+            <button onClick={onClick} className={`flex items-center w-9/10 h-10 rounded-lg px-2 transition-colors
+             ${isSelected ? "bg-[#34D399] border border-[#34D39933]" : "hover:bg-[#232a27] text-[#FFFFFFBF] px-2"}`}>{name}</button>
         </div>
     );
 }
 
-function ProductView({searchTerm}: { searchTerm: string }) {
+function ProductView({searchTerm, categoryId}: { searchTerm: string, categoryId: string | null }) {
     const [products, setProducts] = useState<ProductResponse[]>([]);
+    const [featuredVendors, setFeaturedVendors] = useState<VendorStatsDto[]>([]);
 
     useEffect(() => {
         const keyword = searchTerm.trim();
 
-        console.log("1. Search term:", keyword);
 
-        api.product.productSearchProducts({Keyword: keyword,}).then((result) => {
-                console.log("2. API result:", result); setProducts(result);})
-            .catch((error) => {console.error("3. API error:", error);});}, [searchTerm]);
+        api.product.productSearchProducts({Keyword: keyword || undefined, CategoryId: categoryId || undefined}).then(setProducts)
+            .catch((error) => {console.error("Search error:", error);});}, [searchTerm, categoryId]);
+
+    useEffect(() =>{
+        api.order.orderGetVendorsAboveThreshold({threshold: 100}).then(setFeaturedVendors).catch((error) =>
+        {console.error("Featured vendors error:", error);});}, []);
     return (
         <div className="flex flex-col min-w-0 w-full h-full">
             <h1 className="flex min-w-0 w-full px-2 font-bold text-lg text-[#FFFFFF]">Featured Vendors</h1>
             <div className="flex flex-nowrap min-w-0 w-full px-2 mt-4 pb-2 gap-4 overflow-x-auto">
-                {products.map((p) => (<ProductItem key={p.id} title={p.title ?? "Unnamed"} priceDkk={p.priceDkk ?? 0}/>))}
+                {featuredVendors.map((v) => (<VendorItem key={v.vendorId} name={v.vendorName ?? v.vendorId ?? "Unknown"}
+                                                         listingCount={v.completedOrderCount ?? 0}/>))}
             </div>
             <br/>
             <h1 className="flex min-w-0 w-full px-2 font-bold text-lg text-[#FFFFFF]">Products</h1>
@@ -64,7 +78,7 @@ function ProductView({searchTerm}: { searchTerm: string }) {
     );
 }
 
-function VendorItem() {
+function VendorItem({name, listingCount}: {name: string, listingCount: number}) {
     return (
         <div className="flex flex-col min-w-65 w-65 h-30 bg-[#101513] rounded-2xl border dropshadow-[0px_0px_15px_#16a34a] border-[#FFFFFF1A]">
             <div className="flex w-full h-2/3">
@@ -86,7 +100,7 @@ function VendorItem() {
                 </div>
             </div>
             <div className="flex items-center w-full h-1/3">
-                <h1 className="flex ml-4 text-[#FFFFFF80] text-xs"> - ? listings</h1>
+                <h1 className="flex ml-4 text-[#FFFFFF80] text-xs">{listingCount} completed orders</h1>
             </div>
         </div>
     );
