@@ -17,4 +17,8 @@ public class OrderController(OrderService service) : ControllerBase
     
     [HttpPatch(nameof(UpdateStatus))]
     public OrderDto UpdateStatus([FromBody] UpdateOrderStatusRequestDto request) => service.UpdateStatus(request);
+    
+    [HttpGet(nameof(GetVendorsAboveThreshold))]
+    public List<VendorStatsDto> GetVendorsAboveThreshold([FromQuery] int threshold)
+        => service.GetVendorsAboveThreshold(threshold);
 }

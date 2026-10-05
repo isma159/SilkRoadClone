@@ -12,7 +12,7 @@ public partial record ProductResponse;
 public partial record ProductCreateRequest;
 
 [Facet(typeof(Product),
-    [nameof(Product.VendorId), nameof(Product.CreatedAtUtc), nameof(Product.IsActive)],
+    [nameof(Product.Id), nameof(Product.VendorId), nameof(Product.CreatedAtUtc), nameof(Product.IsActive)],
     NullableProperties = true,
     GenerateToSource = false)]
 public partial record ProductUpdateRequest

@@ -41,6 +41,20 @@ public class OrderServiceTests : IDisposable
         _db.Insert(product);
         return product.Id;
     }
+    private void SeedOrder(string vendorId, string status)
+    {
+        _db.Insert(new Order
+        {
+            Id = Guid.NewGuid().ToString(),
+            BuyerId = "buyer-1",
+            VendorId = vendorId,
+            ProductId = "p",
+            Quantity = 1,
+            PricePaidDkk = 10m,
+            Status = status,
+            CreatedAtUtc = DateTime.UtcNow
+        });
+    }
 
     [Fact]
     public void Create_rejects_zero_quantity()
@@ -148,6 +162,49 @@ public class OrderServiceTests : IDisposable
     {
         Assert.Throws<ValidationException>(() =>
             _service.UpdateStatus(new UpdateOrderStatusRequestDto { OrderId = "x", Status = "Banana" }));
+    }
+    
+    [Fact]
+    public void VendorStats_counts_only_completed_orders()
+    {
+        SeedOrder("v1", "Completed");
+        SeedOrder("v1", "Pending");
+        SeedOrder("v1", "Cancelled");
+
+        var stats = Assert.Single(_service.GetVendorsAboveThreshold(0));
+
+        Assert.Equal(1, stats.CompletedOrderCount);
+    }
+
+    [Fact]
+    public void VendorStats_filters_by_threshold()
+    {
+        SeedOrder("v1", "Completed");
+        SeedOrder("v1", "Completed");
+        SeedOrder("v1", "Completed");
+        SeedOrder("v2", "Completed");
+
+        var stats = Assert.Single(_service.GetVendorsAboveThreshold(2));
+
+        Assert.Equal("v1", stats.VendorId);
+    }
+
+    [Fact]
+    public void VendorStats_orders_by_count_descending()
+    {
+        SeedOrder("v2", "Completed");
+        SeedOrder("v1", "Completed");
+        SeedOrder("v1", "Completed");
+
+        var result = _service.GetVendorsAboveThreshold(1);
+
+        Assert.Equal(new[] { "v1", "v2" }, result.Select(r => r.VendorId));
+    }
+
+    [Fact]
+    public void VendorStats_rejects_negative_threshold()
+    {
+        Assert.Throws<ValidationException>(() => _service.GetVendorsAboveThreshold(-1));
     }
 
     public void Dispose() => _db.Dispose();
