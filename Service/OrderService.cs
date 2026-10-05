@@ -65,5 +65,20 @@ public class OrderService(MyDatabaseConnection db)
         db.Update(order);
         return new OrderDto(order);
     }
+    public List<VendorStatsDto> GetVendorsAboveThreshold(int threshold)
+    {
+        if (threshold < 0)
+            throw new ValidationException("Threshold cannot be negative.");
+
+        return db.Orders
+            .Where(o => o.Status == "Completed")
+            .GroupBy(o => o.VendorId)
+            .Select(g => new { VendorId = g.Key, Count = g.Count() })
+            .ToList()
+            .Where(x => x.Count >= threshold)
+            .OrderByDescending(x => x.Count)
+            .Select(x => new VendorStatsDto(x.VendorId, x.Count))
+            .ToList();
+    }
 }
 
