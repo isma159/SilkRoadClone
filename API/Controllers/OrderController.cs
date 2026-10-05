@@ -14,4 +14,7 @@ public class OrderController(OrderService service) : ControllerBase
 
     [HttpPost(nameof(Create))]
     public OrderDto Create([FromBody] CreateOrderRequestDto request) => service.Create(request);
+    
+    [HttpPatch(nameof(UpdateStatus))]
+    public OrderDto UpdateStatus([FromBody] UpdateOrderStatusRequestDto request) => service.UpdateStatus(request);
 }
