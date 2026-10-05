@@ -54,7 +54,8 @@ public class CategoryService(MyDatabaseConnection db)
     {
         var category = db.Categories.FirstOrDefault(c => c.CategoryId == categoryId) ??
                        throw new ValidationException("The category doesn't exist");
-        //TODO block or reassigning products in this category when deleting
+        if (db.Products.Any(p => p.CategoryId == categoryId))
+            throw new ValidationException("Category still has products.");
         db.Delete(category);
     }
 }
