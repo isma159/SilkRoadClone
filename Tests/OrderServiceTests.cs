@@ -206,6 +206,49 @@ public class OrderServiceTests : IDisposable
     {
         Assert.Throws<ValidationException>(() => _service.GetVendorsAboveThreshold(-1));
     }
+    [Fact]
+    public void VendorStats_breaks_ties_by_vendor_id()
+    {
+        SeedOrder("b", "Completed");
+        SeedOrder("a", "Completed");
+
+        var result = _service.GetVendorsAboveThreshold(1);
+
+        Assert.Equal(new[] { "a", "b" }, result.Select(r => r.VendorId));
+    }
+    [Fact]
+    public void VendorStats_assigns_ranks_and_respects_limit()
+    {
+        SeedOrder("v1", "Completed");
+        SeedOrder("v1", "Completed");
+        SeedOrder("v2", "Completed");
+        SeedOrder("v3", "Completed");
+
+        var result = _service.GetVendorsAboveThreshold(1, limit: 2);
+
+        Assert.Equal(new[] { "v1", "v2" }, result.Select(r => r.VendorId));
+        Assert.Equal(new[] { 1, 2 }, result.Select(r => r.Rank));
+    }
+    
+    [Fact]
+    public void VendorStats_rejects_non_positive_limit()
+    {
+        Assert.Throws<ValidationException>(() => _service.GetVendorsAboveThreshold(1, limit: 0));
+    }
+    [Fact]
+    public void VendorStats_uses_username_and_falls_back_to_id()
+    {
+        _db.Insert(new User { Id = "v1", Username = "shopkeeper", Password = "x" });
+        SeedOrder("v1", "Completed");
+        SeedOrder("v1", "Completed");
+        SeedOrder("v2", "Completed");
+
+        var result = _service.GetVendorsAboveThreshold(1);
+
+        Assert.Equal("shopkeeper", result[0].VendorName);
+        Assert.Equal("v2", result[1].VendorName);
+    }
+    
 
     public void Dispose() => _db.Dispose();
 }

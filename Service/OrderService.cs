@@ -65,19 +65,35 @@ public class OrderService(MyDatabaseConnection db)
         db.Update(order);
         return new OrderDto(order);
     }
-    public List<VendorStatsDto> GetVendorsAboveThreshold(int threshold)
+    public List<VendorStatsDto> GetVendorsAboveThreshold(int threshold, int? limit = null)
     {
         if (threshold < 0)
             throw new ValidationException("Threshold cannot be negative.");
+        if (limit is <= 0)
+            throw new ValidationException("Limit must be positive.");
 
-        return db.Orders
+        var ranked = db.Orders
             .Where(o => o.Status == "Completed")
             .GroupBy(o => o.VendorId)
             .Select(g => new { VendorId = g.Key, Count = g.Count() })
             .ToList()
             .Where(x => x.Count >= threshold)
             .OrderByDescending(x => x.Count)
-            .Select(x => new VendorStatsDto(x.VendorId, x.Count))
+            .ThenBy(x => x.VendorId)
+            .Take(limit ?? int.MaxValue)
+            .ToList();
+
+        var ids = ranked.Select(x => x.VendorId).ToList();
+        var names = db.Users
+            .Where(u => ids.Contains(u.Id))
+            .ToDictionary(u => u.Id, u => u.Username);
+
+        return ranked
+            .Select((x, i) => new VendorStatsDto(
+                x.VendorId,
+                names.GetValueOrDefault(x.VendorId, x.VendorId),
+                x.Count,
+                i + 1))
             .ToList();
     }
 }
