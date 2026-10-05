@@ -134,8 +134,7 @@ public class ProductService(MyDatabaseConnection db)
         if (!string.IsNullOrWhiteSpace(dto.Keyword))
         {
             var keyword = dto.Keyword.Trim().ToLower();
-            query = query.Where (p => p.Title.ToLower().Contains(keyword) 
-            || (p.Description != null &&  p.Description.ToLower().Contains(keyword)));
+            query = query.Where (p => p.Title.ToLower().Contains(keyword));
         }
 
         return query.ToList().Select(p => new ProductResponse(p)).ToList();

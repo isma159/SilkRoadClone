@@ -1,6 +1,6 @@
 import { Star } from "lucide-react";
-import {Api, ProductResponse, VendorStatsDto} from "@/src/api/Api.ts";
-import {use, useEffect, useState} from "react";
+import {Api, type CategoryDto, type ProductResponse, VendorStatsDto} from "@/src/api/Api.ts";
+import {useEffect, useState} from "react";
 
 const api = new Api({baseUrl: "http://localhost:5285"});
 
@@ -21,7 +21,7 @@ export default function MarketView({searchTerm}: { searchTerm: string }) {
 function SideBar({selectedCategoryId, onSelectCategory}: {selectedCategoryId: string | null;
 onSelectCategory: (id: string | null) => void;}) {
 
-    const [categories, setCategories] = useState<{categoryId: string | null ; categoryName: string}[]>([]);
+    const [categories, setCategories] = useState<CategoryDto[]>([]);
 
     useEffect(() => {api.category.categoryGetCategories().then(setCategories);}, []);
 
@@ -117,7 +117,7 @@ function ProductItem({title, priceDkk}: {title: string, priceDkk: number}) {
                 <h1 className="flex w-full text-[#FFFFFF80] text-xs">Placeholder vendor</h1>
             </div>
             <div className="flex w-full h-10 px-4 py-2">
-                <h1 className="flex w-full font-bold text-[#34D399]">{priceDkk ?? 0}</h1>
+                <h1 className="flex w-full font-bold text-[#34D399]">{priceDkk ?? 0}.-</h1>
             </div>
         </div>
     );
