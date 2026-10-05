@@ -31,6 +31,7 @@ public class ProductService(MyDatabaseConnection db)
     public ProductResponse Create(ProductCreateRequest request)
     {
         Validate(request.Title, request.PriceDkk, request.Stock);
+        EnsureCategoryExists(request.CategoryId);
 
         var product = new Product
         {
@@ -77,7 +78,11 @@ public class ProductService(MyDatabaseConnection db)
         if (request.Description != null) product.Description = request.Description;
         if (request.ShipsFrom != null) product.ShipsFrom = request.ShipsFrom;
         if (request.ImageUrl != null) product.ImageUrl = request.ImageUrl;
-        if (request.CategoryId != null) product.CategoryId = request.CategoryId;
+        if (request.CategoryId != null)
+        {
+            EnsureCategoryExists(request.CategoryId);
+            product.CategoryId = request.CategoryId;
+        }
 
         db.Update(product);
         return ToResponse(product);
@@ -89,6 +94,11 @@ public class ProductService(MyDatabaseConnection db)
                       ?? throw new KeyNotFoundException();
         product.IsActive = false;
         db.Update(product);
+    }
+    private void EnsureCategoryExists(string categoryId)
+    {
+        if (!db.Categories.Any(c => c.CategoryId == categoryId))
+            throw new ValidationException("Category does not exist.");
     }
 
     private static void Validate(string title, decimal price, int stock)
