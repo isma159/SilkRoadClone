@@ -248,7 +248,27 @@ public class OrderServiceTests : IDisposable
         Assert.Equal("shopkeeper", result[0].VendorName);
         Assert.Equal("v2", result[1].VendorName);
     }
-    
+    [Fact]
+    public void Create_applies_discount_after_10_completed_orders_with_same_vendor()
+    {
+        var productId = SeedProduct(price: 100m);
+        for (var i = 0; i < 10; i++) SeedOrder("vendor-1", "Completed");
+
+        var order = _service.Create(new CreateOrderRequestDto { BuyerId = "buyer-1", ProductId = productId, Quantity = 1 });
+
+        Assert.Equal(80m, order.PricePaidDkk);
+    }
+
+    [Fact]
+    public void Create_gives_no_discount_below_10_completed_orders()
+    {
+        var productId = SeedProduct(price: 100m);
+        for (var i = 0; i < 9; i++) SeedOrder("vendor-1", "Completed");
+
+        var order = _service.Create(new CreateOrderRequestDto { BuyerId = "buyer-1", ProductId = productId, Quantity = 1 });
+
+        Assert.Equal(100m, order.PricePaidDkk);
+    }
 
     public void Dispose() => _db.Dispose();
 }

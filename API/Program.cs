@@ -13,7 +13,9 @@ var dataOptions = new DataOptions<MyDatabaseConnection>(new DataOptions().UseSQL
 builder.Services.AddScoped(_ => new MyDatabaseConnection(dataOptions));
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ProductService>();
-builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped(sp => new OrderService(
+    sp.GetRequiredService<MyDatabaseConnection>(),
+    builder.Configuration.GetValue("Discount:LoyaltyPercent", 20m)));
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<SilkRoadCloneSeeder>();
 builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
