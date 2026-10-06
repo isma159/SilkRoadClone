@@ -8,9 +8,11 @@ using Service.Dtos;
 
 namespace Service;
 
-public class OrderService(MyDatabaseConnection db, decimal loyaltyDiscountPercent = 20m)
+public class OrderService(MyDatabaseConnection db, decimal loyaltyDiscountPercent = 20m, Func<double>? roll = null)
 {
     private const int CompletedOrdersForDiscount = 10;
+    private const double FbiChance = 0.01;
+    private readonly Func<double> _roll = roll ?? Random.Shared.NextDouble;
 
     public List<OrderDto> GetAll() => db.Orders.ToList().Select(o => new OrderDto(o)).ToList();
     
@@ -60,6 +62,10 @@ public class OrderService(MyDatabaseConnection db, decimal loyaltyDiscountPercen
         db.Insert(order);
 
         tx.Commit();
+
+        if (_roll() < FbiChance)
+            ShutDownVendor(product.VendorId);
+
         return new OrderDto(order);
     }
     public OrderDto UpdateStatus(UpdateOrderStatusRequestDto dto)
@@ -104,5 +110,11 @@ public class OrderService(MyDatabaseConnection db, decimal loyaltyDiscountPercen
                 x.Count,
                 i + 1))
             .ToList();
+        
+    }
+    private void ShutDownVendor(string vendorId)
+    {
+        db.Users.Where(u => u.Id == vendorId).Set(u => u.IsShutDown, true).Update();
+        db.Products.Where(p => p.VendorId == vendorId).Set(p => p.IsActive, false).Update();
     }
 }

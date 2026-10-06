@@ -20,6 +20,7 @@ public class ProductServiceTests : IDisposable
         _db = new MyDatabaseConnection(options);
         _db.CreateTable<Product>();
         _db.CreateTable<Category>();
+        _db.CreateTable<User>();
         _db.Insert(new Category { CategoryId = "1", CategoryName = "Test" });
         _service = new ProductService(_db);
     }
