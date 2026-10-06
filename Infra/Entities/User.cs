@@ -13,5 +13,6 @@ public class User
     [Association(ThisKey = nameof(Id), OtherKey = nameof(Product.VendorId))] 
     public List<Product> Products { get; set; } = new();
     [Column(DataType = DataType.NVarChar, Length = 255)] public Roles Role { get; set; } = Roles.User;
+    [Column] public bool IsShutDown { get; set; }
 
 }
