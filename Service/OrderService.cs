@@ -8,11 +8,16 @@ using Service.Dtos;
 
 namespace Service;
 
-public class OrderService(MyDatabaseConnection db)
+public class OrderService(MyDatabaseConnection db, decimal loyaltyDiscountPercent = 20m)
 {
+    private const int CompletedOrdersForDiscount = 10;
+
     public List<OrderDto> GetAll() => db.Orders.ToList().Select(o => new OrderDto(o)).ToList();
     
     private static readonly string[] ValidStatuses = { "Pending", "Completed", "Cancelled" };
+
+    public int CountCompletedOrders(string buyerId, string vendorId) =>
+        db.Orders.Count(o => o.BuyerId == buyerId && o.VendorId == vendorId && o.Status == "Completed");
 
     public OrderDto Create(CreateOrderRequestDto dto)
     {
@@ -27,6 +32,10 @@ public class OrderService(MyDatabaseConnection db)
 
         if (product.VendorId == dto.BuyerId)
             throw new ValidationException("You cannot buy your own product.");
+
+        var total = product.PriceDkk * dto.Quantity;
+        if (CountCompletedOrders(dto.BuyerId, product.VendorId) >= CompletedOrdersForDiscount)
+            total = Math.Round(total * (1 - loyaltyDiscountPercent / 100m), 2);
 
         using var tx = db.BeginTransaction();
 
@@ -44,7 +53,7 @@ public class OrderService(MyDatabaseConnection db)
             VendorId = product.VendorId,
             ProductId = product.Id,
             Quantity = dto.Quantity,
-            PricePaidDkk = product.PriceDkk * dto.Quantity,
+            PricePaidDkk = total,
             Status = "Pending",
             CreatedAtUtc = DateTime.UtcNow
         };
@@ -97,4 +106,3 @@ public class OrderService(MyDatabaseConnection db)
             .ToList();
     }
 }
-
