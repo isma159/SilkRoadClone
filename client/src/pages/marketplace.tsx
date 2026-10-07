@@ -1,5 +1,5 @@
 import { Star } from "lucide-react";
-import {Api, type CategoryDto, type ProductResponse, VendorStatsDto} from "@/src/api/Api.ts";
+import {Api, type CategoryDto, type ProductResponse, type VendorStatsDto} from "@/src/api/Api.ts";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
@@ -34,7 +34,7 @@ onSelectCategory: (id: string | null) => void;}) {
             {selectedCategoryId && (<button onClick={() => onSelectCategory(null)} className={"text-xs text-[#FFFFFF80] hover:text-[#34D399] transition-colors"}></button>)}
                 </div>
             {categories.map((c) => (<CategoryItem key={c.categoryId} name={c.categoryName ?? "Unnamed"}
-            isSelected={c.categoryId === selectedCategoryId} onClick={() => handleCategoryClick(c.categoryId)}/>))}
+            isSelected={c.categoryId === selectedCategoryId} onClick={() => handleCategoryClick(c.categoryId ?? null)}/>))}
         </div>
     );
 }
