@@ -31,9 +31,10 @@ public class UserService(MyDatabaseConnection db)
         var user = db.Users.FirstOrDefault(u => u.Username == dto.Username);
 
         if (user == null) throw new KeyNotFoundException("User not found");
+        if (user.Password != dto.Password) throw new UnauthorizedAccessException("Incorrect password");
+        if (user.IsShutDown) throw new UnauthorizedAccessException("This account has been shut down.");
 
-        if (user.Password == dto.Password) return new UserDto(user);
-        else throw new UnauthorizedAccessException("Incorrect password");
+        return new UserDto(user);
     }
 
     public UserDto CreateUser(CreateUserRequestDto dto)

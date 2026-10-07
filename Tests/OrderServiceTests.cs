@@ -269,6 +269,32 @@ public class OrderServiceTests : IDisposable
 
         Assert.Equal(100m, order.PricePaidDkk);
     }
+    [Fact]
+    public void Create_shuts_down_vendor_when_fbi_roll_hits()
+    {
+        _db.Insert(new User { Id = "vendor-1", Username = "vendor", Password = "x" });
+        var service = new OrderService(_db, roll: () => 0.0);
+        var productId = SeedProduct();
+
+        var order = service.Create(new CreateOrderRequestDto { BuyerId = "buyer-1", ProductId = productId, Quantity = 1 });
+
+        Assert.NotNull(order);
+        Assert.True(_db.Users.First(u => u.Id == "vendor-1").IsShutDown);
+        Assert.False(_db.Products.First(p => p.Id == productId).IsActive);
+    }
+
+    [Fact]
+    public void Create_leaves_vendor_alone_when_fbi_roll_misses()
+    {
+        _db.Insert(new User { Id = "vendor-1", Username = "vendor", Password = "x" });
+        var service = new OrderService(_db, roll: () => 0.5);
+        var productId = SeedProduct();
+
+        service.Create(new CreateOrderRequestDto { BuyerId = "buyer-1", ProductId = productId, Quantity = 1 });
+
+        Assert.False(_db.Users.First(u => u.Id == "vendor-1").IsShutDown);
+        Assert.True(_db.Products.First(p => p.Id == productId).IsActive);
+    }
 
     public void Dispose() => _db.Dispose();
 }
