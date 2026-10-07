@@ -63,15 +63,6 @@ export interface UpdateOrderStatusRequestDto {
   status?: string;
 }
 
-export interface VendorStatsDto {
-  vendorId?: string;
-  vendorName?: string;
-  /** @format int32 */
-  completedOrderCount?: number;
-  /** @format int32 */
-  rank?: number;
-}
-
 export interface ProductResponse {
   id?: string;
   title?: string;
@@ -126,7 +117,7 @@ export interface ProductCreateRequest {
   shipsFrom?: string | null;
   imageUrl?: string | null;
   categoryId?: string;
-  vendor?: User | null;
+  vendorId?: string;
 }
 
 export interface ProductUpdateRequest {
@@ -140,7 +131,6 @@ export interface ProductUpdateRequest {
   shipsFrom?: string | null;
   imageUrl?: string | null;
   categoryId?: string | null;
-  vendor?: User | null;
 }
 
 export interface UserDto {
@@ -162,13 +152,6 @@ export interface CreateUserRequestDto {
 
 export interface CategoryDeleteCategoryParams {
   categoryId?: string;
-}
-
-export interface OrderGetVendorsAboveThresholdParams {
-  /** @format int32 */
-  threshold?: number;
-  /** @format int32 */
-  limit?: number | null;
 }
 
 export interface ProductGetAllParams {
@@ -195,6 +178,10 @@ export interface ProductSearchProductsParams {
 
 export interface UserGetUserByNameParams {
   name: string;
+}
+
+export interface UserGetUserByIdParams {
+  id: string;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -609,25 +596,6 @@ export class Api<
         format: "json",
         ...params,
       }),
-
-    /**
-     * No description
-     *
-     * @tags Order
-     * @name OrderGetVendorsAboveThreshold
-     * @request GET:/Order/GetVendorsAboveThreshold
-     */
-    orderGetVendorsAboveThreshold: (
-      query: OrderGetVendorsAboveThresholdParams = {},
-      params: RequestParams = {},
-    ) =>
-      this.request<VendorStatsDto[], any>({
-        path: `/Order/GetVendorsAboveThreshold`,
-        method: "GET",
-        query: query,
-        format: "json",
-        ...params,
-      }),
   };
   product = {
     /**
@@ -760,14 +728,32 @@ export class Api<
      *
      * @tags User
      * @name UserGetUserByName
-     * @request GET:/User/{name}
+     * @request GET:/User/name/{name}
      */
     userGetUserByName: (
       { name }: UserGetUserByNameParams,
       params: RequestParams = {},
     ) =>
       this.request<UserDto, any>({
-        path: `/User/${name}`,
+        path: `/User/name/${name}`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags User
+     * @name UserGetUserById
+     * @request GET:/User/id/{id}
+     */
+    userGetUserById: (
+      { id }: UserGetUserByIdParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<UserDto, any>({
+        path: `/User/id/${id}`,
         method: "GET",
         format: "json",
         ...params,

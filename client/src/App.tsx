@@ -12,6 +12,8 @@ import {
     DropdownMenuItem, DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "./components/ui/dropdown-menu.tsx";
+import {ProductPage} from "./pages/product.tsx";
+import {StallPage} from "./pages/stall.tsx";
 
 export function App() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -24,6 +26,8 @@ export function App() {
             <Routes>
                 <Route path={"/"} element={<MarketView searchTerm={searchTerm}/>}/>
                 <Route path={"/login"} element={<LoginView user={user} setUser={setUser}/>}/>
+                <Route path={"product/:id"} element={<ProductPage/>}/>
+                <Route path={"/stall/:id"} element={<StallPage currentUser={user}/>}/>
             </Routes>
         </div>
     );
@@ -41,19 +45,19 @@ searchTerm: string, onSearchChange: (value: string) => void;}) {
                 <div className="flex justify-center items-center min-w-11 h-11 bg-[#FFFFFF1A] rounded-xl"/>
                 <h1 className="w-full min-w-0 truncate text-[#FFFFFF] font-bold">{user.username}</h1>
                 <br/>
-                <AccountMenu setUser={setUser}/>
+                <AccountMenu user={user} setUser={setUser}/>
             </div>}
             {!user && <Link to={"/login"} className="flex absolute right-4 justify-center items-center w-11 h-11 bg-[#34D399] rounded-lg shadow-[0px_0px_15px_#34D39926] ring-4 ring-transparent hover:bg-[#6EE7B7] active:ring-[#34D39933] transition-colors"><LogInIcon size={20}/></Link>}
         </div>
     );
 }
 
-function AccountMenu({setUser}: {setUser: (user: UserDto | null) => void}) {
+function AccountMenu({user, setUser}: {user: UserDto | null, setUser: (user: UserDto | null) => void}) {
 
     const navigate = useNavigate();
 
-    const handleOnProfileClick = () => {
-        navigate("/profile")
+    const handleOnStallClick = () => {
+        navigate(`/stall/${user?.id}`)
     }
 
     const handleLogout = () => {
@@ -63,13 +67,13 @@ function AccountMenu({setUser}: {setUser: (user: UserDto | null) => void}) {
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger render={<button className="flex min-w-11 h-11 cursor-pointer justify-center items-center rounded-lg text-[#FFFFFF1A] border border-[#FFFFFF1A] bg-[#161b18 hover:bg-[#232a27] data-popup-open:border-[#34D399] data-popup-open:text-[#34D399] transition-colors">
+            <DropdownMenuTrigger render={<button className="flex min-w-11 h-11 cursor-pointer justify-center items-center rounded-lg text-[#FFFFFF1A] border border-[#FFFFFF1A] bg-[#161b18] hover:bg-[#232a27] data-popup-open:border-[#34D399] data-popup-open:text-[#34D399] transition-colors">
                     <Menu size={24}/>
                 </button>}/>
             <DropdownMenuContent className="w-50 mt-5 bg-[#101513] border border-[#FFFFFF1A] shadow-[0px_0px_15px_#161b18] ring-0">
-                <DropdownMenuItem onClick={handleOnProfileClick} className="font-bold cursor-pointer text-white my-1 hover:bg-[#232a27] transition-colors"><User className="mr-2 size-6"/> Profile</DropdownMenuItem>
-                <DropdownMenuItem className="font-bold cursor-pointer text-white my-1 hover:bg-[#232a27] transition-colors"><Store className="mr-2 size-6"/> My Stall</DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-[#FFFFFF1A]"/>5
+                <DropdownMenuItem className="font-bold cursor-pointer text-white my-1 hover:bg-[#232a27] transition-colors"><User className="mr-2 size-6"/> Profile</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleOnStallClick} className="font-bold cursor-pointer text-white my-1 hover:bg-[#232a27] transition-colors"><Store className="mr-2 size-6"/> My Stall</DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-[#FFFFFF1A]"/>
                 <DropdownMenuItem onClick={handleLogout} variant={"destructive"} className="font-bold cursor-pointer text-red-400 my-1 hover:bg-[#232a27] transition-colors"><LogOut className="mr-2 size-6"/>Log out</DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

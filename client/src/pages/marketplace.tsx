@@ -1,6 +1,7 @@
 import { Star } from "lucide-react";
 import {Api, type CategoryDto, type ProductResponse, VendorStatsDto} from "@/src/api/Api.ts";
 import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 const api = new Api({baseUrl: "http://localhost:5285"});
 
@@ -71,7 +72,7 @@ function ProductView({searchTerm, categoryId}: { searchTerm: string, categoryId:
             <br/>
             <h1 className="flex min-w-0 w-full px-2 font-bold text-lg text-[#FFFFFF]">Products</h1>
             <div className="flex flex-1 flex-wrap mt-4 px-2 gap-6 overflow-y-auto">
-                {products.map((p) => (<ProductItem key={p.id} title={p.title ?? "Unnamed"} priceDkk={p.priceDkk ?? 0}/>))}
+                {products.map((p) => (<ProductItem key={p.id} product={p}/>))}
             </div>
 
         </div>
@@ -80,7 +81,7 @@ function ProductView({searchTerm, categoryId}: { searchTerm: string, categoryId:
 
 function VendorItem({name, listingCount}: {name: string, listingCount: number}) {
     return (
-        <div className="flex flex-col min-w-65 w-65 h-30 bg-[#101513] rounded-2xl border dropshadow-[0px_0px_15px_#16a34a] border-[#FFFFFF1A]">
+        <div className="flex flex-col min-w-65 w-65 h-30 bg-[#101513] rounded-2xl border border-[#FFFFFF1A]">
             <div className="flex w-full h-2/3">
                 <div className="flex justify-center items-center w-20 h-20 ">
                     <div className="flex w-2/3 h-2/3 bg-[#FFFFFF1A] rounded-xl"/>
@@ -106,19 +107,26 @@ function VendorItem({name, listingCount}: {name: string, listingCount: number}) 
     );
 }
 
-function ProductItem({title, priceDkk}: {title: string, priceDkk: number}) {
+function ProductItem({product}: {product: ProductResponse}) {
+
+    const navigate = useNavigate();
+
+    const handleOnClick = () => {
+        navigate(`/product/${product.id}`)
+    }
+
     return (
-        <div className="flex flex-col w-65 h-65 bg-[#101513] rounded-2xl border dropshadow-[0px_0px_15px_#16a34a] border-[#FFFFFF1A] hover:border-[#34D399] hover:border-2 transition-colors">
+        <button onClick={handleOnClick} className="flex flex-col w-65 h-65 bg-[#101513] rounded-2xl border border-[#FFFFFF1A] hover:border-[#34D399] hover:border-2 transition-colors">
             <div className="flex w-full h-40 bg-[#FFFFFF1A] rounded-t-2xl"/>
             <div className="flex min-w-0 w-full h-10 px-4 py-2">
-                <h1 className="flex min-w-0 w-full text-white font-bold truncate">{title}</h1>
+                <h1 className="flex min-w-0 w-full text-white font-bold truncate">{product.title ?? "Unnamed"}</h1>
             </div>
             <div className="flex w-full h-5 px-4">
-                <h1 className="flex w-full text-[#FFFFFF80] text-xs">Placeholder vendor</h1>
+                <h1 className="flex w-full text-[#FFFFFF80] text-xs">{product.vendor?.username ?? "Unknown vendor"}</h1>
             </div>
             <div className="flex w-full h-10 px-4 py-2">
-                <h1 className="flex w-full font-bold text-[#34D399]">{priceDkk ?? 0}.-</h1>
+                <h1 className="flex w-full font-bold text-[#34D399]">{product.priceDkk ?? 0}.-</h1>
             </div>
-        </div>
+        </button>
     );
 }
