@@ -11,7 +11,7 @@ public class ProductService(MyDatabaseConnection db)
 {
     public List<ProductResponse> GetAll(string? categoryId, string? search)
     {
-        var query = db.Products.Where(p => p.IsActive);
+        var query = db.Products.LoadWith(p => p.Vendor).Where(p => p.IsActive);
 
         if (!string.IsNullOrWhiteSpace(categoryId))
             query = query.Where(p => p.CategoryId == categoryId);
@@ -23,7 +23,7 @@ public class ProductService(MyDatabaseConnection db)
 
     public ProductResponse GetById(string id)
     {
-        var product = db.Products.FirstOrDefault(p => p.Id == id && p.IsActive)
+        var product = db.Products.LoadWith(p => p.Vendor).FirstOrDefault(p => p.Id == id && p.IsActive)
                       ?? throw new KeyNotFoundException();
         return ToResponse(product);
     }
@@ -43,7 +43,7 @@ public class ProductService(MyDatabaseConnection db)
             ShipsFrom = request.ShipsFrom,
             ImageUrl = request.ImageUrl,
             CategoryId = request.CategoryId,
-            VendorId = "test-vendor", // erstattes med den indloggede bruger
+            VendorId = request.VendorId,
             IsActive = true,
             CreatedAtUtc = DateTime.UtcNow
         };
@@ -113,7 +113,7 @@ public class ProductService(MyDatabaseConnection db)
 
     private static ProductResponse ToResponse(Product p) => new(
         p.Id, p.Title, p.Description, p.PriceDkk, p.Stock, p.ShipsFrom,
-        p.ImageUrl, p.CategoryId, p.VendorId, p.IsActive, p.CreatedAtUtc, null);
+        p.ImageUrl, p.CategoryId, p.VendorId, p.IsActive, p.CreatedAtUtc, p.Vendor);
 
     public List<ProductResponse> Search(ProductSearchDto dto)
     {
@@ -134,10 +134,9 @@ public class ProductService(MyDatabaseConnection db)
         if (!string.IsNullOrWhiteSpace(dto.Keyword))
         {
             var keyword = dto.Keyword.Trim().ToLower();
-            query = query.Where (p => p.Title.ToLower().Contains(keyword) 
-            || (p.Description != null &&  p.Description.ToLower().Contains(keyword)));
+            query = query.Where (p => p.Title.ToLower().Contains(keyword));
         }
 
-        return query.ToList().Select(p => new ProductResponse(p)).ToList();
+        return query.LoadWith(p => p.Vendor).ToList().Select(p => new ProductResponse(p)).ToList();
     }
 }

@@ -1,7 +1,7 @@
 import {ArrowUpRight} from "lucide-react";
 import {Input} from "@/src/components/ui/input.tsx";
 
-import {type UserDto} from "@/src/api/Api.ts";
+import {type UserDto} from "../api/Api.ts";
 import {api} from "@/src/api/client"
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";

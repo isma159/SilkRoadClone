@@ -126,7 +126,7 @@ export interface ProductCreateRequest {
   shipsFrom?: string | null;
   imageUrl?: string | null;
   categoryId?: string;
-  vendor?: User | null;
+  vendorId?: string;
 }
 
 export interface ProductUpdateRequest {
@@ -140,7 +140,6 @@ export interface ProductUpdateRequest {
   shipsFrom?: string | null;
   imageUrl?: string | null;
   categoryId?: string | null;
-  vendor?: User | null;
 }
 
 export interface UserDto {
@@ -195,6 +194,10 @@ export interface ProductSearchProductsParams {
 
 export interface UserGetUserByNameParams {
   name: string;
+}
+
+export interface UserGetUserByIdParams {
+  id: string;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -760,14 +763,32 @@ export class Api<
      *
      * @tags User
      * @name UserGetUserByName
-     * @request GET:/User/{name}
+     * @request GET:/User/name/{name}
      */
     userGetUserByName: (
       { name }: UserGetUserByNameParams,
       params: RequestParams = {},
     ) =>
       this.request<UserDto, any>({
-        path: `/User/${name}`,
+        path: `/User/name/${name}`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags User
+     * @name UserGetUserById
+     * @request GET:/User/id/{id}
+     */
+    userGetUserById: (
+      { id }: UserGetUserByIdParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<UserDto, any>({
+        path: `/User/id/${id}`,
         method: "GET",
         format: "json",
         ...params,

@@ -25,6 +25,15 @@ public class UserService(MyDatabaseConnection db)
 
         return user;
     }
+    
+    public UserDto GetUserById(string id)
+    {
+        var user = db.Users.LoadWith(u => u.Products).Where(u => u.Id == id).Select(u => new UserDto(u)).FirstOrDefault();
+
+        if (user == null) throw new KeyNotFoundException("User not found");
+
+        return user;
+    }
 
     public UserDto Login(LoginDto dto)
     {
