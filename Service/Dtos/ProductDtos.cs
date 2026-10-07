@@ -7,12 +7,12 @@ namespace Service.Dtos;
 public partial record ProductResponse;
 
 [Facet(typeof(Product),
-    [nameof(Product.Id), nameof(Product.VendorId), nameof(Product.IsActive), nameof(Product.CreatedAtUtc)],
+    [nameof(Product.Id), nameof(Product.IsActive), nameof(Product.CreatedAtUtc), nameof(Product.Vendor)],
     GenerateToSource = false)]
 public partial record ProductCreateRequest;
 
 [Facet(typeof(Product),
-    [nameof(Product.Id), nameof(Product.VendorId), nameof(Product.CreatedAtUtc), nameof(Product.IsActive)],
+    [nameof(Product.VendorId), nameof(Product.CreatedAtUtc), nameof(Product.IsActive), nameof(Product.Vendor)],
     NullableProperties = true,
     GenerateToSource = false)]
 public partial record ProductUpdateRequest

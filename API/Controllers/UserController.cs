@@ -14,8 +14,11 @@ public class UserController(UserService service): ControllerBase
     [HttpGet(nameof(GetUsers))]
     public List<UserDto> GetUsers() => service.GetAll();
 
-    [HttpGet("{name}")]
+    [HttpGet("name/{name}")]
     public UserDto GetUserByName(string name) => service.GetUserByName(name);
+
+    [HttpGet("id/{id}")]
+    public UserDto GetUserById(string id) => service.GetUserById(id);
 
     [HttpPost(nameof(Login))]
     public UserDto Login([FromBody] LoginDto dto) => service.Login(dto);
