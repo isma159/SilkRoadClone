@@ -15,10 +15,7 @@ export function ProductPage({currentUser}: {currentUser: UserDto | null}) {
     const [completedSales, setCompletedSales] = useState<number>(0);
 
     useEffect(() => {
-        console.log(`Vendor ID: ${product?.vendor?.id ?? "Unknown"}, Buyer ID: ${currentUser?.id ?? "Unknown"}`)
-
         api.product.productGetById({id: id}).then(p => {setProduct(p); if (p.vendor) loadOrdersAndSales(p)}).catch(err => {console.log("Failed to get product by id: " + err); setProduct(null)});
-
     }, [refreshKey]);
 
     const loadOrdersAndSales = (p: ProductResponse) => {
