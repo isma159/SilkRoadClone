@@ -96,6 +96,7 @@ export interface User {
   password?: string;
   products?: Product[];
   role?: Roles;
+  isShutDown?: boolean;
 }
 
 export interface Product {
@@ -147,6 +148,7 @@ export interface UserDto {
   username?: string;
   products?: Product[];
   role?: Roles;
+  isShutDown?: boolean;
 }
 
 export interface LoginDto {
@@ -161,6 +163,15 @@ export interface CreateUserRequestDto {
 
 export interface CategoryDeleteCategoryParams {
   categoryId?: string;
+}
+
+export interface OrderGetAllFromVendorParams {
+  vendorId: string;
+}
+
+export interface OrderGetCompletedSalesParams {
+  buyerId: string;
+  vendorId: string;
 }
 
 export interface OrderGetVendorsAboveThresholdParams {
@@ -571,6 +582,42 @@ export class Api<
     orderGetAll: (params: RequestParams = {}) =>
       this.request<OrderDto[], any>({
         path: `/Order/GetAll`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Order
+     * @name OrderGetAllFromVendor
+     * @request GET:/Order/GetAllFromVendor/{vendorId}
+     */
+    orderGetAllFromVendor: (
+      { vendorId }: OrderGetAllFromVendorParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<OrderDto[], any>({
+        path: `/Order/GetAllFromVendor/${vendorId}`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Order
+     * @name OrderGetCompletedSales
+     * @request GET:/Order/GetCompletedSales/{buyerId}/{vendorId}
+     */
+    orderGetCompletedSales: (
+      { buyerId, vendorId }: OrderGetCompletedSalesParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<number, any>({
+        path: `/Order/GetCompletedSales/${buyerId}/${vendorId}`,
         method: "GET",
         format: "json",
         ...params,

@@ -1,11 +1,11 @@
-import { Star } from "lucide-react";
-import {Api, type CategoryDto, type ProductResponse, type VendorStatsDto} from "@/src/api/Api.ts";
+import {Plus, Star} from "lucide-react";
+import {Api, type CategoryDto, type ProductResponse, Roles, type UserDto, type VendorStatsDto} from "@/src/api/Api.ts";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 const api = new Api({baseUrl: "http://localhost:5285"});
 
-export default function MarketView({searchTerm}: { searchTerm: string }) {
+export default function MarketView({currentUser, searchTerm}: { currentUser: UserDto | null, searchTerm: string }) {
     const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
     return (
         <div className="flex w-full h-full gap-8 pt-22 px-4 pb-4">
@@ -13,13 +13,13 @@ export default function MarketView({searchTerm}: { searchTerm: string }) {
                 className="pointer-events-none absolute left-1/2 top-1/2 h-205 w-255 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-500/10 blur-[60px]"
                 aria-hidden="true"
             />
-            <SideBar selectedCategoryId={selectedCategoryId} onSelectCategory={setSelectedCategoryId} />
+            <SideBar currentUser={currentUser} selectedCategoryId={selectedCategoryId} onSelectCategory={setSelectedCategoryId} />
             <ProductView searchTerm={searchTerm} categoryId={selectedCategoryId}/>
         </div>
     );
 }
 
-function SideBar({selectedCategoryId, onSelectCategory}: {selectedCategoryId: string | null;
+function SideBar({currentUser, selectedCategoryId, onSelectCategory}: {currentUser: UserDto | null, selectedCategoryId: string | null;
 onSelectCategory: (id: string | null) => void;}) {
 
     const [categories, setCategories] = useState<CategoryDto[]>([]);
@@ -27,10 +27,16 @@ onSelectCategory: (id: string | null) => void;}) {
     useEffect(() => {api.category.categoryGetCategories().then(setCategories);}, []);
 
     const handleCategoryClick = (categoryId: string | null) => {onSelectCategory(categoryId === selectedCategoryId ? null : categoryId);};
+
+    const handleNewCategory = () => {
+
+    }
+
     return (
         <div className="flex flex-col min-w-75 w-75 h-full max-h-200 bg-[#101513] rounded-2xl border dropshadow-[0px_0px_15px_#16a34a] border-[#FFFFFF1A] p-4 gap-2 overflow-y-auto">
             <div className="flex items-center justify-between w-full h-10">
-            <h1 className="flex items-center font-bold text-lg w-full h-10 text-[#34D399]">Categories</h1>
+                <h1 className="flex items-center font-bold text-lg w-full h-10 text-[#34D399]">Categories</h1>
+                {currentUser && currentUser.role == Roles.Admin && <button className="flex justify-center items-center w-10 h-10 ml-auto text-[#34D399] hover:text-[#6EE7B7] transition-colors"><Plus/></button>}
             {selectedCategoryId && (<button onClick={() => onSelectCategory(null)} className={"text-xs text-[#FFFFFF80] hover:text-[#34D399] transition-colors"}></button>)}
                 </div>
             {categories.map((c) => (<CategoryItem key={c.categoryId} name={c.categoryName ?? "Unnamed"}
@@ -66,29 +72,34 @@ function ProductView({searchTerm, categoryId}: { searchTerm: string, categoryId:
         <div className="flex flex-col min-w-0 w-full h-full">
             <h1 className="flex min-w-0 w-full px-2 font-bold text-lg text-[#FFFFFF]">Featured Vendors</h1>
             <div className="flex flex-nowrap min-w-0 w-full px-2 mt-4 pb-2 gap-4 overflow-x-auto">
-                {featuredVendors.map((v) => (<VendorItem key={v.vendorId} name={v.vendorName ?? v.vendorId ?? "Unknown"}
-                                                         listingCount={v.completedOrderCount ?? 0}/>))}
+                {featuredVendors.map((v) => (<VendorItem key={v.vendorId} vendor={v}/>))}
             </div>
             <br/>
             <h1 className="flex min-w-0 w-full px-2 font-bold text-lg text-[#FFFFFF]">Products</h1>
             <div className="flex flex-1 flex-wrap mt-4 px-2 gap-6 overflow-y-auto">
                 {products.map((p) => (<ProductItem key={p.id} product={p}/>))}
             </div>
-
         </div>
     );
 }
 
-function VendorItem({name, listingCount}: {name: string, listingCount: number}) {
+function VendorItem({vendor}: {vendor: VendorStatsDto | null}) {
+
+    const navigate = useNavigate();
+
+    const handleOnClick = () => {
+        navigate(`/stall/${vendor?.vendorId}`)
+    }
+
     return (
-        <div className="flex flex-col min-w-65 w-65 h-30 bg-[#101513] rounded-2xl border border-[#FFFFFF1A]">
+        <button onClick={handleOnClick} className="flex flex-col min-w-65 w-65 h-30 bg-[#101513] rounded-2xl border border-[#FFFFFF1A] hover:border-[#34D399] hover:border-2 transition-colors">
             <div className="flex w-full h-2/3">
                 <div className="flex justify-center items-center w-20 h-20 ">
                     <div className="flex w-2/3 h-2/3 bg-[#FFFFFF1A] rounded-xl"/>
                 </div>
                 <div className="flex flex-col w-45 h-20">
                     <div className="flex items-center w-full h-1/2">
-                        <h1 className="flex mt-2 min-w-0 w-full truncate font-bold text-white"> - Featured Vendor</h1>
+                        <h1 className="flex mt-2 min-w-0 w-full truncate font-bold text-white"> - {vendor?.vendorName ?? "Unknown"}</h1>
                     </div>
 
                     <div className="flex items-center w-full h-1/2">
@@ -101,9 +112,9 @@ function VendorItem({name, listingCount}: {name: string, listingCount: number}) 
                 </div>
             </div>
             <div className="flex items-center w-full h-1/3">
-                <h1 className="flex ml-4 text-[#FFFFFF80] text-xs">{listingCount} completed orders</h1>
+                <h1 className="flex ml-4 text-[#FFFFFF80] text-xs">{vendor?.completedOrderCount ?? 0} completed orders</h1>
             </div>
-        </div>
+        </button>
     );
 }
 
