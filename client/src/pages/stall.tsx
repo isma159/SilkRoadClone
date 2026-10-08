@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import type {CategoryDto, ProductResponse, UserDto} from "@/src/api/Api.ts";
+import type {CategoryDto, OrderDto, ProductResponse, UserDto} from "../api/Api.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {api} from "../api/client.ts";
 import {Edit, Pencil, Plus, Trash} from "lucide-react";
@@ -11,7 +11,6 @@ import {
     DialogTitle,
     DialogTrigger
 } from "../components/ui/dialog.tsx";
-import {Field} from "@base-ui/react";
 import {Input} from "../components/ui/input.tsx";
 import {
     Combobox,
@@ -33,11 +32,15 @@ export function StallPage({currentUser}: {currentUser: UserDto | null}) {
     const [selectedProduct, setSelectedProduct] = useState<ProductResponse | null>(null);
     const [open, setOpen] = useState<boolean>(false);
     const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+    const [sales, setSales] = useState<OrderDto[]>([]);
 
     const {id} = useParams();
 
     useEffect(() => {
-        if (id && !open && !deleteOpen) api.user.userGetUserById({id: id}).then(setVendor).catch(err => console.log("Failed to fetch vendor: " + err));
+        if (id && !open && !deleteOpen) {
+            api.user.userGetUserById({id: id}).then(setVendor).catch(err => console.log("Failed to fetch vendor: " + err));
+            api.order.orderGetAllFromVendor({vendorId: id}).then(setSales).catch(err => console.log("Failed to fetch sales: " + err));
+        }
         if (!open && !deleteOpen) setSelectedProduct(null);
     }, [open, deleteOpen]);
 
@@ -63,7 +66,7 @@ export function StallPage({currentUser}: {currentUser: UserDto | null}) {
 
             <div className="flex justify-center items-center w-250 h-40 gap-6">
                 <div className="flex flex-col justify-center w-75 h-30 bg-[#101513] rounded-2xl border border-[#FFFFFF1A] px-4">
-                    <h1 className="text-2xl font-black text-[#34D399]">?</h1>
+                    <h1 className="text-2xl font-black text-[#34D399]">{sales.length}</h1>
                     <p className="text-sm text-[#FFFFFF80]">Total sales</p>
                 </div>
                 <div className="flex flex-col justify-center w-75 h-30 bg-[#101513] rounded-2xl border border-[#FFFFFF1A] px-4">
@@ -103,7 +106,7 @@ function ProductItem({product, currentUser, vendor, setSelectedProduct, setOpen,
     }
 
     return (
-        <button onClick={handleOnClick} className="group flex flex-col w-65 h-65 bg-[#101513] rounded-2xl border border-[#FFFFFF1A] hover:border-[#34D399] hover:border-2 transition-colors">
+        <div onClick={handleOnClick} className="group flex flex-col w-65 h-65 bg-[#101513] rounded-2xl border border-[#FFFFFF1A] hover:border-[#34D399] hover:border-2 transition-colors">
             <div className="flex flex-row-reverse items-start w-full h-40 bg-[#FFFFFF1A] rounded-t-2xl">
                 {vendor?.id == currentUser?.id && <button onClick={e => {e.stopPropagation(); handleOnDelete()}} className="flex justify-center items-center min-w-10 min-h-10 text-red-400 hover:text-red-300 invisible group-hover:visible transition-colors"><Trash/></button>}
                 {vendor?.id == currentUser?.id && <button onClick={e => {e.stopPropagation(); handleOnEdit()}} className="flex justify-center items-center min-w-10 min-h-10 text-[#6c757d] hover:text-[#a1a1aa] invisible group-hover:visible transition-colors"><Pencil/></button>}
@@ -115,7 +118,7 @@ function ProductItem({product, currentUser, vendor, setSelectedProduct, setOpen,
             <div className="flex w-full h-10 px-4 py-2">
                 <h1 className="flex w-full font-bold text-[#34D399]">{product.priceDkk ?? 0}.-</h1>
             </div>
-        </button>
+        </div>
     );
 }
 

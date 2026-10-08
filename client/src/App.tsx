@@ -5,7 +5,7 @@ import LoginView from "@/src/pages/loginview.tsx";
 import {Routes, Route, Link, useNavigate} from "react-router-dom";
 import MarketView from "./pages/marketplace.tsx";
 import {useState} from "react";
-import type {UserDto} from "@/src/api/Api.ts";
+import type {UserDto} from "./api/Api.ts";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -24,9 +24,9 @@ export function App() {
         <div className="flex justify-center items-center w-full h-screen bg-[#080B0A]">
             <TopBar user={user} setUser={setUser} searchTerm={searchTerm} onSearchChange={setSearchTerm} />
             <Routes>
-                <Route path={"/"} element={<MarketView searchTerm={searchTerm}/>}/>
+                <Route path={"/"} element={<MarketView currentUser={user} searchTerm={searchTerm}/>}/>
                 <Route path={"/login"} element={<LoginView user={user} setUser={setUser}/>}/>
-                <Route path={"product/:id"} element={<ProductPage/>}/>
+                <Route path={"product/:id"} element={<ProductPage currentUser={user}/>}/>
                 <Route path={"/stall/:id"} element={<StallPage currentUser={user}/>}/>
             </Routes>
         </div>

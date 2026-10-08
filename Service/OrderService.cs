@@ -16,6 +16,8 @@ public class OrderService(MyDatabaseConnection db, decimal loyaltyDiscountPercen
 
     public List<OrderDto> GetAll() => db.Orders.ToList().Select(o => new OrderDto(o)).ToList();
     
+    public List<OrderDto> GetAllFromVendor(string vendorId) => db.Orders.Where(o => o.VendorId == vendorId).Select(o => new OrderDto(o)).ToList();
+    
     private static readonly string[] ValidStatuses = { "Pending", "Completed", "Cancelled" };
 
     public int CountCompletedOrders(string buyerId, string vendorId) =>
@@ -56,7 +58,7 @@ public class OrderService(MyDatabaseConnection db, decimal loyaltyDiscountPercen
             ProductId = product.Id,
             Quantity = dto.Quantity,
             PricePaidDkk = total,
-            Status = "Pending",
+            Status = "Completed",
             CreatedAtUtc = DateTime.UtcNow
         };
         db.Insert(order);
