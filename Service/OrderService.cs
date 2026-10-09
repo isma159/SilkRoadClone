@@ -38,7 +38,7 @@ public class OrderService(MyDatabaseConnection db, decimal loyaltyDiscountPercen
             throw new ValidationException("You cannot buy your own product.");
 
         var total = product.PriceDkk * dto.Quantity;
-        if (CountCompletedOrders(dto.BuyerId, product.VendorId) >= CompletedOrdersForDiscount)
+        if (CountCompletedOrders(dto.BuyerId, product.VendorId) % CompletedOrdersForDiscount == 0)
             total = Math.Round(total * (1 - loyaltyDiscountPercent / 100m), 2);
 
         using var tx = db.BeginTransaction();
